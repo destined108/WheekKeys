@@ -108,4 +108,12 @@ def render(pet, skin, background=(0, 0, 0, 0)):
         mouth_x = int(pet.x) + sprite.width//2 - 9
         mouth_y = y + int(sprite.height*.69)
         d.line((mouth_x, mouth_y, mouth_x+10, mouth_y-3+int(phase*2)), fill='#95bf55', width=1)
+    # The same visible feedback is shown for real taps and demo taps.
+    lit = pet.key_flash > 0
+    d.rounded_rectangle((246, 97, 263, 109), radius=2,
+                        fill='#f6e5bd' if lit else '#33483e')
+    d.text((250, 96), '+', fill='#33483e' if lit else '#b7d878')
+    for i in range(12):
+        d.rectangle((266+i*3, 101, 267+i*3, 106),
+                    fill='#b7d878' if i < pet.grass else '#33483e')
     return im.resize((640, 224), Image.Resampling.NEAREST)

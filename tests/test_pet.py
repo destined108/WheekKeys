@@ -54,7 +54,8 @@ class PetTests(unittest.TestCase):
         self.assertEqual(first.tobytes(), later.tobytes())
         # All four placements keep the paws on the same ground line.
         for x in (48, 54, 60, 66):
-            bounds = render(Pet(state='run', x=x), skin).getbbox()
+            # Exclude the new typing indicator under the hay.
+            bounds = render(Pet(state='run', x=x), skin).crop((0, 0, 480, 224)).getbbox()
             self.assertEqual(bounds[3], 188)
 
     def test_travel_eases_and_stops_at_destination(self):

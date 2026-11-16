@@ -8,8 +8,10 @@ class Pet:
     elapsed: float = 0
     x: float = 48
     meals: int = 0
+    key_flash: float = 0
 
     def tick(self, dt: float, presses: int = 0):
+        self.key_flash = .3 if presses > 0 else max(0, self.key_flash - dt)
         self.grass = min(24, self.grass + max(0, presses))
         self.elapsed += dt
         if self.state == 'rest' and self.grass >= 12:

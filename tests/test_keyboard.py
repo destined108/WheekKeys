@@ -1,24 +1,38 @@
-"""Test edge counting without accessing the host keyboard."""
+"""Count transitions without accessing the host keyboard."""
 import unittest
-from unittest.mock import patch
-from types import SimpleNamespace
-from wheekkeys.__main__ import KeyCounter
+import sys
+from wheekkeys.keyboard import PressAccumulator, KeyCounter
 
 class KeyboardTests(unittest.TestCase):
-    def test_count_new_presses_not_holds_mouse_or_modifiers(self):
-        down = set()
-        api = SimpleNamespace(GetAsyncKeyState=lambda key: 0x8000 if key in down else 0)
-        with patch('ctypes.windll', SimpleNamespace(user32=api), create=True):
-            counter = KeyCounter()
-        self.assertEqual(counter.poll(), 0)
-        down.update((65, 66, 1, 16, 160))
-        self.assertEqual(counter.poll(), 2)
-        self.assertEqual(counter.poll(), 0)
-        down.clear()
-        self.assertEqual(counter.poll(), 0)
-        self.assertEqual(counter.previous, set())
-        down.add(65)
-        self.assertEqual(counter.poll(), 1)
+    def test_short_taps_between_frames_are_not_lost(self):
+        counter = PressAccumulator()
+        for _ in range(4):
+            counter.event(65, True)
+            counter.event(65, False)
+        self.assertEqual(counter.drain(), 4)
+        self.assertEqual(counter.drain(), 0)
+        self.assertEqual(counter.down, set())
+
+    def test_holds_mouse_and_modifiers(self):
+        counter = PressAccumulator()
+        for key in (65, 66, 1, 16, 160, 91):
+            counter.event(key, True)
+        for _ in range(10):
+            counter.event(65, True)
+        self.assertEqual(counter.drain(), 2)
+        counter.event(65, False)
+        counter.event(65, True)
+        self.assertEqual(counter.drain(), 1)
+
+    @unittest.skipUnless(sys.platform == 'win32', 'Native Windows hook required')
+    def test_native_hook_starts_and_stops(self):
+        counter = KeyCounter()
+        try:
+            self.assertTrue(counter.thread.is_alive())
+            self.assertIsNone(counter.error)
+        finally:
+            counter.close()
+        self.assertFalse(counter.thread.is_alive())
 
 if __name__ == '__main__':
     unittest.main()

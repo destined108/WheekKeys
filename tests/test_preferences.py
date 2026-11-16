@@ -90,3 +90,16 @@ class PreferenceTests(unittest.TestCase):
         self.assertEqual(normal.tobytes(), high.tobytes())
         halfway = render(Pet(grass=500, threshold=1000), skin)
         self.assertNotEqual(high.tobytes(), halfway.tobytes())
+
+    def test_malformed_models_are_skipped_without_hiding_valid_models(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            export_model(builtin(), root/'valid')
+            for i, data in enumerate(([], None, 'bad', 42,
+                                      dict(name='Bad', poses=[], walk='walk.png', skin='skin.json'))):
+                folder = root/f'bad-{i}'
+                folder.mkdir()
+                (folder/'model.json').write_text(json.dumps(data), encoding='utf-8')
+            models, errors = available_models(root)
+            self.assertEqual([model.id for model in models], ['potato', 'valid'])
+            self.assertEqual(len(errors), 5)

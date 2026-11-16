@@ -4,12 +4,12 @@
 
 English · [简体中文](README.zh-CN.md)
 
-![Typing grows hay; Potato scurries over, eats, and returns to sleep](docs/demo-typing-v3.gif)
+![Typing grows hay; Potato scurries over, eats, and returns to sleep](docs/demo-chew-v4.gif)
 
-[![Windows · Download build](https://img.shields.io/badge/Windows-Download_build-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)
+[![Windows · Download build](https://img.shields.io/badge/Windows-Download-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/releases/latest/download/WheekKeys-Windows-x64.zip)
 [Make your own cavy](#make-your-own-cavy) — send [this skill](.agents/skills/create-guinea-pig/SKILL.md) and your pet’s photo to your agent.
 
-> Early prototype. No installer or Release is available yet. The button opens Windows CI builds: choose a successful run, download **Artifacts → WheekKeys-Windows**, unzip, and run `WheekKeys.exe`. GitHub sign-in is required for artifact downloads. The executable is unsigned. Download a build from the latest commit to get the updated typing detection.
+> Windows 10/11 (x64) preview. Download the ZIP, unzip it and run `WheekKeys.exe`; Python is not required. The executable is unsigned. [Release notes and checksums](https://github.com/destined108/WheekKeys/releases/latest) · [CI builds](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml).
 
 ## A tiny typing companion
 
@@ -18,7 +18,7 @@ Open WheekKeys, leave it running in the corner, and type normally in Notepad or 
 - Windows 10/11: transparent, always-on-top corner window.
 - Drag with the left mouse button. Right-click to feed manually or quit. Esc quits when the pet window has focus.
 - No account, points, or network services.
-- `--demo` is an automatic ten-second preview, **not live typing mode**. Launch without it for real keyboard interaction.
+- `--demo` is an automatic preview (ten seconds at the default speed; slower cycles finish before restarting), **not live typing mode**. Launch without it for real keyboard interaction.
 
 The GIF and `--demo` use the same fixed-step scene, twelve simulated taps, renderer, and feedback as the application. The GIF is a rendered preview, not a Windows screen recording. Live input naturally follows your own typing speed.
 
@@ -75,7 +75,7 @@ python -m pip install pyinstaller==6.16.0
 python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
 ```
 
-Output: `dist/WheekKeys.exe`. CI tests and packages the app, uploads an artifact, and does not publish Releases.
+Output: `dist/WheekKeys.exe`. CI tests and packages the app on Windows. Version tags (`v*`) publish the tested executable, portable ZIP and SHA-256 checksums as a Release; branch builds only upload CI artifacts.
 
 Windows acceptance check: launch without `--demo`, switch to Notepad, type twelve quick taps, and verify twelve feedback pulses, a full meter, and one feeding cycle. Hold a key to verify repeat filtering. Check dragging, quitting, demo mode, and custom skins. Automated tests cover counting, feedback, scene timing, animation, and palettes; native Windows desktop/hook behavior still requires Windows verification.
 

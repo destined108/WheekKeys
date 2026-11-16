@@ -1,6 +1,6 @@
 import unittest
 from wheekkeys.core import Pet
-from wheekkeys.art import load_skin, render, sprites, DEFAULT_COLORS
+from wheekkeys.art import load_skin, render, sprites, DEFAULT_COLORS, chewing_sprite
 
 class PetTests(unittest.TestCase):
     def test_full_meal_returns_to_rest(self):
@@ -71,6 +71,21 @@ class PetTests(unittest.TestCase):
         p.tick(2)
         p.tick(2.5)
         self.assertEqual((p.state, p.x), ('settle', 48))
+
+    def test_chewing_keeps_eyes_and_body_still(self):
+        original = sprites(DEFAULT_COLORS)[2]
+        before = original.tobytes()
+        closed = chewing_sprite(original, 0)
+        opened = chewing_sprite(original, .34)
+        self.assertEqual(closed.size, opened.size)
+        from PIL import ImageChops
+        changes = ImageChops.difference(closed, opened).convert('RGB').getbbox()
+        self.assertIsNotNone(changes)
+        self.assertGreaterEqual(changes[0], round(original.width*.64))
+        self.assertGreaterEqual(changes[1], round(original.height*.62))
+        self.assertLessEqual(changes[2], round(original.width*.92))
+        self.assertLessEqual(changes[3], round(original.height*.88))
+        self.assertEqual(before, sprites(DEFAULT_COLORS)[2].tobytes())
 
 if __name__ == '__main__':
     unittest.main()

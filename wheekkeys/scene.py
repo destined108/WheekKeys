@@ -3,6 +3,7 @@ from .core import Pet
 
 STEP = 1 / 60
 DEMO_STEPS = 600
+MAX_LIVE_DT = .1
 
 
 class Scene:
@@ -14,12 +15,17 @@ class Scene:
         self.remainder = 0.
         self.pending = 0
 
+    def advance_live(self, dt, presses=0):
+        """Resume gently after sleep/dialog stalls; keep newly received presses."""
+        return self.advance(min(MAX_LIVE_DT, max(0, dt)), presses)
+
     def advance(self, dt, presses=0):
         self.pending += max(0, presses)
         self.remainder += max(0, dt)
         while self.remainder + 1e-9 >= STEP:
             self.remainder -= STEP
-            if self.demo and self.step == DEMO_STEPS:
+            if (self.demo and self.step >= DEMO_STEPS and self.pet.state == 'rest'
+                    and self.pet.meals > 0 and not self.pet.grass and not self.pending):
                 self.pet, self.step = Pet(threshold=self.threshold, speed=self.speed), 0
             self.step += 1
             # Twelve taps over two seconds, exactly the same for GIF and window.

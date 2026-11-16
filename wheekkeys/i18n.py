@@ -117,6 +117,12 @@ ZH_HANT = {'Show / hide pet': '顯示／隱藏寵物',
  'Sprite sheets must be PNG, four equal columns, at most 8192×4096.': '動作圖必須是 PNG 格式，分成四個等寬區域，且不超過 8192×4096 '
                                                                       '像素。',
  'Empty guinea pig sprite': '動作圖中有空白影格。'}
+ZH.update({'Palette must be a JSON object.': '花色文件必须是 JSON 对象。',
+           'Model manifest must be a JSON object.': '模型配置必须是 JSON 对象。',
+           'Model file paths must be nonempty strings.': '模型文件路径必须是非空字符串。'})
+ZH_HANT.update({'Palette must be a JSON object.': '花色檔案必須是 JSON 物件。',
+                'Model manifest must be a JSON object.': '模型設定必須是 JSON 物件。',
+                'Model file paths must be nonempty strings.': '模型檔案路徑必須是非空字串。'})
 ZH.update({'Language': '语言', 'Follow system': '跟随系统', 'Invalid language.': '语言设置无效。'})
 ZH_HANT.update({'Language': '語言', 'Follow system': '跟隨系統', 'Invalid language.': '語言設定無效。'})
 LANGUAGES = ('auto', 'zh-Hans', 'zh-Hant', 'en')

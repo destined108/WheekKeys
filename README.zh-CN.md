@@ -4,12 +4,12 @@
 
 [English](README.md) · 简体中文
 
-![打字时牧草慢慢长出来，小豚鼠跑来吃完，又回去趴下](docs/demo-typing-v3.gif)
+![打字时牧草慢慢长出来，小豚鼠跑来吃完，又回去趴下](docs/demo-chew-v4.gif)
 
-[![下载 Windows 试玩版](https://img.shields.io/badge/Windows-下载试玩版-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)
+[![下载 Windows 试玩版](https://img.shields.io/badge/Windows-下载试玩版-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/releases/latest/download/WheekKeys-Windows-x64.zip)
 [制作自己的豚鼠](#制作自己的豚鼠) — 把[这个 skill](.agents/skills/create-guinea-pig/SKILL.md) 和自家豚鼠的照片发给 agent 即可。
 
-> 项目还在原型阶段，暂时没有正式发布版或安装程序。点击上方按钮，选择最新一次成功的 Windows 构建，在页面的 **Artifacts** 区域下载 **WheekKeys-Windows**，解压后运行 `WheekKeys.exe` 即可。下载需要登录 GitHub，程序目前尚未进行代码签名。请使用最新提交对应的版本，其中包含打字检测的修复。
+> 适用于 Windows 10/11 的 64 位试玩版。下载 ZIP，解压后运行 `WheekKeys.exe`，无需安装 Python。程序尚未签名。[版本说明与校验文件](https://github.com/destined108/WheekKeys/releases/latest) · [CI 构建](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)。
 
 ## 一只陪你打字的小豚鼠
 
@@ -18,7 +18,7 @@
 - 支持 Windows 10/11。透明小窗默认显示在屏幕右下角，并保持在其他窗口上方。
 - 按住鼠标左键可以拖动；右键菜单可以手动喂草或退出。选中桌宠窗口后，也可以按 Esc 退出。
 - 不用注册账号，没有积分系统，也不依赖联网服务。
-- 加上 `--demo` 参数会播放十秒循环演示，**演示模式不会读取你的按键**。想让它随打字长草，正常启动、不加这个参数即可。
+- 加上 `--demo` 参数会播放循环演示（默认速度下为十秒，低速时会等完整动作结束再重播），**演示模式不会读取你的按键**。想让它随打字长草，正常启动、不加这个参数即可。
 
 GIF 和程序内的演示使用相同的动画逻辑和播放节奏：模拟十二次按键，展示长草、吃草和回去休息的过程。GIF 由程序渲染生成，不是 Windows 桌面录屏。正常使用时，牧草会随着你的实际打字速度生长。
 
@@ -87,7 +87,7 @@ python -m pip install pyinstaller==6.16.0
 python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
 ```
 
-生成的程序位于 `dist/WheekKeys.exe`。GitHub Actions 会自动运行测试、打包并提供下载，但不会自动发布正式版本（Release）。
+生成的程序位于 `dist/WheekKeys.exe`。GitHub Actions 会在 Windows 上运行测试并打包。推送版本标签（`v*`）后，会将通过测试的 exe、便携 ZIP 和 SHA-256 校验文件发布到 Release；普通分支构建只保存 CI 产物。
 
 在 Windows 上手动测试时，先正常启动程序，不加 `--demo`，再切到记事本快速按十二次键。检查按键图标是否随之闪亮、十二格进度是否填满，以及豚鼠是否完成吃草和返回休息的动作。再确认长按只计一次，并检查拖动、退出、演示模式和自定义花色是否正常。
 

@@ -67,7 +67,7 @@ def package(folder, output):
     if output.exists():
         raise ValueError(f'Output already exists: {output}')
     manifest = dict(name=model.name, poses='poses.png', walk='walk.png', skin='skin.json')
-    source_manifest = json.loads((folder/'model.json').read_text(encoding='utf-8'))
+    source_manifest = json.loads((folder/'model.json').read_text(encoding='utf-8-sig'))
     files = {'poses.png': Path(model.poses), 'walk.png': Path(model.walk),
              'skin.json': (folder/source_manifest['skin']).resolve()}
     for name in ('README.md', 'README.zh-CN.md', 'LICENSE', 'preview.gif'):

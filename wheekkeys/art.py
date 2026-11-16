@@ -3,6 +3,7 @@ import colorsys
 from functools import lru_cache
 import json
 import math
+import re
 from pathlib import Path
 from PIL import Image, ImageDraw
 
@@ -12,18 +13,21 @@ COLOR_KEYS = ('fur', 'patch', 'cream', 'ear', 'eye')
 
 
 def load_skin(path=None):
-    data = json.loads(Path(path or ROOT / 'skins' / 'tricolor.json').read_text())
+    data = json.loads(Path(path or ROOT / 'skins' / 'tricolor.json').read_text(encoding='utf-8-sig'))
+    if not isinstance(data, dict):
+        raise ValueError('Palette must be a JSON object.')
     for key in COLOR_KEYS:
-        value = data[key]
-        if len(value) != 7 or value[0] != '#':
+        value = data.get(key)
+        if not isinstance(value, str) or not re.fullmatch(r'#[0-9a-fA-F]{6}', value):
             raise ValueError(f'{key} must be #RRGGBB')
-        int(value[1:], 16)
+        data[key] = value.upper()
     return data
 
 
 @lru_cache(maxsize=16)
 def sprites(palette, walking=False, poses_path=None, walk_path=None):
     """Load once; preserve the painted fur shading when applying custom palettes."""
+    palette = tuple(value.upper() for value in palette)
     filename = 'guinea-pig-walk.png' if walking else 'guinea-pig.png'
     path = (walk_path if walking else poses_path) or ROOT / 'assets' / filename
     with Image.open(path) as source:
@@ -72,6 +76,28 @@ def sprites(palette, walking=False, poses_path=None, walk_path=None):
     return tuple(aligned)
 
 
+def chewing_sprite(sprite, elapsed):
+    """Move the lower muzzle one pixel; eyes, outline and paws stay fixed.
+
+    The displacement fades to zero at the patch boundary, avoiding the seam
+    caused by resizing a whole pixel-art character between 61 and 62 rows.
+    """
+    amount = (0, .6, 1., .6)[int(elapsed * 6) % 4]
+    if not amount:
+        return sprite
+    result = sprite.copy()
+    left, right = round(sprite.width*.64), round(sprite.width*.92)
+    top, bottom = round(sprite.height*.62), round(sprite.height*.88)
+    source, target = sprite.load(), result.load()
+    for y in range(top, bottom):
+        vertical = math.sin(math.pi * (y-top) / (bottom-top))
+        for x in range(left, right):
+            horizontal = math.sin(math.pi * (x-left) / (right-left))
+            offset = round(amount * math.sqrt(max(0, vertical * horizontal)))
+            target[x, y] = source[x, y-offset]
+    return result
+
+
 def render(pet, skin, background=(0, 0, 0, 0), model=None):
     im = Image.new('RGBA', (320, 112), background)
     d = ImageDraw.Draw(im)
@@ -88,9 +114,9 @@ def render(pet, skin, background=(0, 0, 0, 0), model=None):
     else:
         sprite = sprites(palette, False, *paths)[index]
     phase = math.sin(pet.elapsed * (19 if moving else 13))
-    # Only the painted legs change during travel; the torso stays grounded.
+    # Never rescale the whole face to chew: that makes eyes and fur shimmer.
     if eating:
-        sprite = sprite.resize((sprite.width, sprite.height - (1 if phase > 0 else 0)), Image.Resampling.NEAREST)
+        sprite = chewing_sprite(sprite, pet.elapsed)
     if pet.state == 'return':
         sprite = sprite.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
     ground = 94
@@ -109,9 +135,13 @@ def render(pet, skin, background=(0, 0, 0, 0), model=None):
         d.line((gx, ground, gx + (i % 3 - 1)*4+sway, ground-height), fill='#72af55', width=2)
         d.line((gx, ground-3, gx+4+sway, ground-height+2), fill='#b7d878', width=2)
     if eating:
-        mouth_x = int(pet.x) + sprite.width//2 - 9
-        mouth_y = y + int(sprite.height*.69)
-        d.line((mouth_x, mouth_y, mouth_x+10, mouth_y-3+int(phase*2)), fill='#95bf55', width=1)
+        mouth_x = x + round(sprite.width*.78)
+        jaw_offset = round((0, .6, 1., .6)[int(pet.elapsed * 6) % 4])
+        mouth_y = y + round(sprite.height*.74) + jaw_offset
+        # Keep the stem attached to the mouth and shorten it as it is eaten.
+        length = max(2, round(10 * (1-min(1, pet.elapsed / 2))))
+        tip_y = mouth_y - 3 + int(phase)
+        d.line((mouth_x, mouth_y, mouth_x+length, tip_y), fill='#95bf55', width=1)
     # The same visible feedback is shown for real taps and demo taps.
     lit = pet.key_flash > 0
     d.rounded_rectangle((246, 97, 263, 109), radius=2,

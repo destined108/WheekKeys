@@ -306,7 +306,7 @@ class Application:
             messagebox.showerror(self.t('WheekKeys'), self.t('Keyboard interaction stopped.\n{error}', error=error), parent=self.root)
             self.quit()
             return
-        pet = self.scene.advance(dt, 0 if self.settings.paused else presses)
+        pet = self.scene.advance_live(dt, 0 if self.settings.paused else presses)
         self.configure_pet()  # --demo creates a fresh pet at each loop boundary.
         if not self.hidden:
             image = render(pet, self.skin, self.transparent, self.model)

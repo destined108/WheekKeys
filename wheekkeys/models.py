@@ -27,12 +27,17 @@ def builtin():
 
 def load_model(folder):
     folder = Path(folder).resolve()
-    data = json.loads((folder/'model.json').read_text(encoding='utf-8'))
+    data = json.loads((folder/'model.json').read_text(encoding='utf-8-sig'))
+    if not isinstance(data, dict):
+        raise ValueError('Model manifest must be a JSON object.')
     if not isinstance(data.get('name'), str) or not data['name'].strip():
         raise ValueError('Model name is required.')
     paths = []
     for key in ('poses', 'walk', 'skin'):
-        path = (folder / data[key]).resolve()
+        value = data.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError('Model file paths must be nonempty strings.')
+        path = (folder / value).resolve()
         if not path.is_relative_to(folder):
             raise ValueError('All model files must be inside the model folder.')
         paths.append(path)

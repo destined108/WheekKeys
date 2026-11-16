@@ -1,6 +1,8 @@
 name: Windows prototype
 on:
   push:
+    branches: [main]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -13,11 +15,58 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          architecture: x64
       - run: python -m pip install -r requirements.txt pyinstaller==6.16.0
       - run: python -m unittest discover -s tests -v
       - name: Package portable Windows executable
         run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
+      - name: Create portable ZIP and checksums
+        shell: pwsh
+        run: |
+          Copy-Item LICENSE dist/LICENSE.txt
+          Copy-Item docs/RELEASE-README.txt dist/START-HERE.txt
+          Compress-Archive -Path dist/WheekKeys.exe,dist/LICENSE.txt,dist/START-HERE.txt -DestinationPath dist/WheekKeys-Windows-x64.zip
+          $lines = @('WheekKeys.exe', 'WheekKeys-Windows-x64.zip') | ForEach-Object {
+            $hash = (Get-FileHash "dist/$_" -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $_"
+          }
+          $lines | Set-Content dist/SHA256SUMS.txt -Encoding ascii
       - uses: actions/upload-artifact@v4
         with:
           name: WheekKeys-Windows
-          path: dist/WheekKeys.exe
+          path: |
+            dist/WheekKeys.exe
+            dist/WheekKeys-Windows-x64.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: WheekKeys-Windows
+          path: release-assets
+      - name: Publish tested Windows build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          sha256sum --check SHA256SUMS.txt
+          cd ..
+          gh release create "$RELEASE_TAG" \
+            --verify-tag \
+            --target "$RELEASE_COMMIT" \
+            --title "WheekKeys $RELEASE_TAG — Windows preview" \
+            --notes-file "docs/releases/$RELEASE_TAG.md" \
+            release-assets/WheekKeys.exe \
+            release-assets/WheekKeys-Windows-x64.zip \
+            release-assets/SHA256SUMS.txt

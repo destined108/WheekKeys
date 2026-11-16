@@ -4,31 +4,51 @@
 
 [English](README.md) · 简体中文
 
-![打字长草，土豆跑来吃草，再回去趴下](docs/demo-typing-v3.gif)
+![打字时牧草慢慢长出来，小豚鼠跑来吃完，又回去趴下](docs/demo-typing-v3.gif)
 
-[![Windows 下载构建](https://img.shields.io/badge/Windows-下载构建-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)
-[花色模板](skins/template.json) · [做一只你家的豚鼠](skins/README.md)
+[![下载 Windows 试玩版](https://img.shields.io/badge/Windows-下载试玩版-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)
+[下载花色模板](skins/template.json) · [换上你家豚鼠的花色](skins/README.md)
 
-> 早期原型，尚未发布安装包或 Release。按钮前往 Windows 构建页：选择成功的运行，在 **Artifacts → WheekKeys-Windows** 下载 ZIP，解压运行 `WheekKeys.exe`。下载需要登录 GitHub，可执行文件尚未签名。请下载最新提交对应的构建，以获得修正后的打字检测。
+> 项目还在原型阶段，暂时没有正式发布版或安装程序。点击上方按钮，选择最新一次成功的 Windows 构建，在页面的 **Artifacts** 区域下载 **WheekKeys-Windows**，解压后运行 `WheekKeys.exe` 即可。下载需要登录 GitHub，程序目前尚未进行代码签名。请使用最新提交对应的版本，其中包含打字检测的修复。
 
-## 十秒就懂
+## 一只陪你打字的小豚鼠
 
-打开程序，留在屏幕角落，切到记事本或其他应用正常打字。每次新按下一个键，牧草增加一根，草下方的小按键会亮一下。十二格进度填满，土豆就跑来嚼草，再回去趴下。长按只算一次。
+启动 WheekKeys，让它待在屏幕角落，然后照常在记事本或其他应用里打字。每按一次键，就长出一根牧草，草丛下方的小按键图标也会亮一下。攒满十二格，小豚鼠「土豆」就会跑过来，嚼几口草，再回到原来的位置趴下休息。一直按住同一个键只算一次。
 
-- Windows 10/11：透明置顶小窗，默认右下角。
-- 左键拖动；右键手动喂草或退出；窗口有焦点时按 Esc 退出。
-- 没有账号、积分或联网服务。
-- `--demo` 是自动十秒演示，**不会响应真实打字**；真实互动请不带该参数启动。
+- 支持 Windows 10/11。透明小窗默认显示在屏幕右下角，并保持在其他窗口上方。
+- 按住鼠标左键可以拖动；右键菜单可以手动喂草或退出。选中桌宠窗口后，也可以按 Esc 退出。
+- 不用注册账号，没有积分系统，也不依赖联网服务。
+- 加上 `--demo` 参数会播放十秒循环演示，**演示模式不会读取你的按键**。想让它随打字长草，正常启动、不加这个参数即可。
 
-GIF 和程序的 `--demo` 共用固定步长时间线、十二次模拟按键、绘图和按键反馈。GIF 是渲染预览，并非 Windows 桌面录屏；真实模式按你的打字速度长草。
+GIF 和程序内的演示使用相同的动画逻辑和播放节奏：模拟十二次按键，展示长草、吃草和回去休息的过程。GIF 由程序渲染生成，不是 Windows 桌面录屏。正常使用时，牧草会随着你的实际打字速度生长。
 
-## 键盘隐私
+## 托盘、模型与设置
 
-Windows 版通过带消息循环的键盘钩子累计新按下的次数，能够接收动画帧之间的快速轻触。不将按键转换成文字，不读取窗口标题或剪贴板，不保存、上传键盘事件。只在内存中保留待消费的次数和当前按住的键标识，用于过滤长按重复；松开即移除。修饰键和鼠标不计入。输入正常传递，退出时移除钩子，通常无需管理员权限。Windows 安全桌面不在检测范围内。
+Windows 版启动后，任务栏通知区域会出现豚鼠图标；如果没看到，可以展开托盘里的隐藏图标。右键点击托盘图标或宠物，都可以切换模型、导入花色、打开设置、手动喂草或退出。托盘菜单还可以隐藏宠物，再把它叫回来。
+
+在 **Settings…（设置）** 中，可以调整：
+
+- 吃一次草需要按多少次键：4～100 次，默认 12 次。
+- 移动速度：0.5～2 倍。
+- 显示大小：0.5～2 倍。
+- 是否始终显示在其他窗口上方。
+- 是否暂停打字互动：暂停后不再随打字长草，已经开始的动作会继续，也可以手动喂草。
+
+点击 **Save（保存）** 后立即生效，下次启动也会保留。拖动后的窗口位置同样会记住。
+
+**Pet model（宠物模型）** 用来选择已安装的角色，目前内置「土豆」一个模型。通过 **Import model…（导入模型）** 可以添加包含完整动作的新角色；**Import colors…（导入花色）** 只改变颜色。想制作自己的模型，可以先用 **Export model template…（导出模型模板）** 导出当前角色，再修改图片和名称。切换模型时会恢复该模型自带的花色，详细格式见[模型包说明](models/README.md)。
+
+设置、导入的模型和花色都保存在 `%APPDATA%\WheekKeys` 中，不需要修改 exe。如果托盘启动失败，仍可以使用宠物右键菜单；此时会禁用隐藏功能，避免隐藏后无法找回。
+
+## 会记录我输入的内容吗？
+
+不会。Windows 版通过键盘事件通知统计按键次数，快速按下又松开的按键也能计入。程序不会把按键转换为文字，不读取窗口标题或剪贴板，也不会保存或上传按键记录。
+
+为了避免长按被重复计数，程序只在内存中暂存尚未处理的按键次数，以及当前仍按住的键；松开后便移除对应的状态。Shift、Ctrl、Alt、Win 等修饰键和鼠标按键不计数。程序不会拦截正常输入，退出时也会停止监听。通常无需管理员权限，但无法检测 Windows 安全桌面（例如用户账户控制提示界面）中的按键。
 
 ## 从源码运行
 
-安装 Python 3.12（包含 Tk），在仓库根目录执行：
+先安装 Python 3.12，并确保安装了 Tk 图形界面组件。然后在项目根目录执行：
 
 ```powershell
 py -3.12 -m venv .venv
@@ -36,13 +56,13 @@ py -3.12 -m venv .venv
 .venv\Scripts\python -m wheekkeys
 ```
 
-自动预览，不读取全局键盘（Linux/macOS 需有图形显示环境）：
+只想看看动画，可以启动演示模式。这个模式不会监听其他应用中的按键，在有图形界面的 Linux 和 macOS 上也能预览动画：
 
 ```powershell
 .venv\Scripts\python -m wheekkeys --demo
 ```
 
-使用自定义花色：
+使用自己的花色文件：
 
 ```powershell
 .venv\Scripts\python -m wheekkeys --skin skins\template.json
@@ -50,25 +70,31 @@ py -3.12 -m venv .venv
 
 ## 开发与打包
 
+安装依赖、运行测试并重新生成演示 GIF：
+
 ```sh
 python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 python -m docs.make_demo
 ```
 
-在 Windows 打包：
+在 Windows 上打包成可执行文件：
 
 ```powershell
 python -m pip install pyinstaller==6.16.0
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --add-data "skins;skins" --add-data "assets;assets" launcher.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
 ```
 
-输出为 `dist/WheekKeys.exe`。CI 测试并保存构建产物，不自动发布 Release。
+生成的程序位于 `dist/WheekKeys.exe`。GitHub Actions 会自动运行测试、打包并提供下载，但不会自动发布正式版本（Release）。
 
-Windows 人工验收：不带 `--demo` 启动，切到记事本快速敲十二次，确认按键反馈、十二格进度和完整吃草循环；长按只算一次。再检查拖动、退出、演示模式及自定义花色。自动测试覆盖计数、反馈、时间线、动画和换色；原生 Windows 桌面与钩子仍需实机验证。
+在 Windows 上手动测试时，先正常启动程序，不加 `--demo`，再切到记事本快速按十二次键。检查按键图标是否随之闪亮、十二格进度是否填满，以及豚鼠是否完成吃草和返回休息的动作。再确认长按只计一次，并检查拖动、退出、演示模式和自定义花色是否正常。
 
-## 把你家的豚鼠带来
+自动测试覆盖按键计数、画面反馈、动画时序和花色替换；Windows 上的实际窗口显示和键盘监听仍需实机验证。
 
-复制[模板](skins/template.json)，改五个颜色即可。欢迎附预览图提交花色 PR，或在 Issue 分享。详见[花色指南](skins/README.md)。如果土豆让你笑了一下，欢迎给个 Star，或者把十秒演示分享给喜欢豚鼠的人。
+## 让它长得像你家的豚鼠
 
-MIT License。角色精灵图根据视觉参考使用 AI 辅助生成，项目内素材随仓库以 MIT 许可提供。
+复制[花色模板](skins/template.json)，修改其中的五个颜色，就能给土豆换一身花色。具体方法见[花色指南](skins/README.md)。欢迎在 Issue 里晒出你的作品，也可以附上预览图，提交 PR，把花色分享给其他人。
+
+如果这只小豚鼠让你笑了一下，欢迎点个 Star，或把十秒演示分享给同样喜欢豚鼠的朋友。
+
+项目采用 MIT 许可证。角色图片参考用户提供的示例，使用 AI 辅助生成；项目提供的美术素材同样采用 MIT 许可证。

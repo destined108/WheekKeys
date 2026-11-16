@@ -22,6 +22,16 @@ Open WheekKeys, leave it running in the corner, and type normally in Notepad or 
 
 The GIF and `--demo` use the same fixed-step scene, twelve simulated taps, renderer, and feedback as the application. The GIF is a rendered preview, not a Windows screen recording. Live input naturally follows your own typing speed.
 
+## Tray, models, and settings
+
+The Windows app adds a guinea pig icon to the system tray (it may be under the tray's hidden-icons arrow). Right-click the icon or the pet to access models, colors, settings, manual feeding, and quitting. The tray also lets you hide and restore the pet.
+
+**Settings** offers keys per meal (4–100), movement speed (0.5–2×), display size (0.5–2×), always-on-top, and pausing keyboard interaction. Click **Save** to apply and remember changes. Pausing ignores typing while the current animation can finish; manual feeding remains available. Dragged window positions are remembered too.
+
+**Pet model** selects an installed character. One model, Potato, is bundled. **Import model…** installs a full animation pack; **Import colors…** changes only its palette. **Export model template…** saves an editable copy of the current character. See [model pack format](models/README.md). Switching models restores that model's own colors.
+
+Preferences, imported models, and palettes live under `%APPDATA%\WheekKeys`, outside the exe. If the tray cannot start, the pet's right-click menu remains available and hiding is disabled.
+
 ## Keyboard privacy
 
 On Windows, a message-pumped keyboard hook counts new key-down events, including short taps between animation frames. It does not convert keys to text, inspect window titles or clipboard contents, save events, or send them anywhere. Only a pending count and the set of currently held key identifiers are kept in memory for repeat filtering; released keys are removed. Modifiers and mouse buttons do not count. The hook passes input through and is removed on exit. No administrator access is normally needed. Windows secure desktops are outside its scope.
@@ -60,7 +70,7 @@ Package on Windows:
 
 ```powershell
 python -m pip install pyinstaller==6.16.0
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --add-data "skins;skins" --add-data "assets;assets" launcher.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
 ```
 
 Output: `dist/WheekKeys.exe`. CI tests and packages the app, uploads an artifact, and does not publish Releases.

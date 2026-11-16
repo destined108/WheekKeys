@@ -22,10 +22,11 @@ def load_skin(path=None):
 
 
 @lru_cache(maxsize=16)
-def sprites(palette, walking=False):
+def sprites(palette, walking=False, poses_path=None, walk_path=None):
     """Load once; preserve the painted fur shading when applying custom palettes."""
     filename = 'guinea-pig-walk.png' if walking else 'guinea-pig.png'
-    with Image.open(ROOT / 'assets' / filename) as source:
+    path = (walk_path if walking else poses_path) or ROOT / 'assets' / filename
+    with Image.open(path) as source:
         sheet = source.convert('RGBA')
     if palette != DEFAULT_COLORS:
         targets = [tuple(bytes.fromhex(c[1:])) for c in palette]
@@ -71,7 +72,7 @@ def sprites(palette, walking=False):
     return tuple(aligned)
 
 
-def render(pet, skin, background=(0, 0, 0, 0)):
+def render(pet, skin, background=(0, 0, 0, 0), model=None):
     im = Image.new('RGBA', (320, 112), background)
     d = ImageDraw.Draw(im)
     moving = pet.state in ('run', 'return')
@@ -79,12 +80,13 @@ def render(pet, skin, background=(0, 0, 0, 0)):
     sleeping = pet.state in ('rest', 'settle')
     index = 3 if sleeping else 2 if eating else 1 if moving else 0
     palette = tuple(skin[k] for k in COLOR_KEYS)
+    paths = (model.poses, model.walk) if model else (None, None)
     if moving:
         distance = pet.x - 48 if pet.state == 'run' else 224 - pet.x
         index = int(max(0, distance) / 6) % 4
-        sprite = sprites(palette, walking=True)[index]
+        sprite = sprites(palette, True, *paths)[index]
     else:
-        sprite = sprites(palette)[index]
+        sprite = sprites(palette, False, *paths)[index]
     phase = math.sin(pet.elapsed * (19 if moving else 13))
     # Only the painted legs change during travel; the torso stays grounded.
     if eating:
@@ -115,5 +117,5 @@ def render(pet, skin, background=(0, 0, 0, 0)):
     d.text((250, 96), '+', fill='#33483e' if lit else '#b7d878')
     for i in range(12):
         d.rectangle((266+i*3, 101, 267+i*3, 106),
-                    fill='#b7d878' if i < pet.grass else '#33483e')
+                    fill='#b7d878' if i < min(12, pet.grass * 12 / pet.threshold) else '#33483e')
     return im.resize((640, 224), Image.Resampling.NEAREST)

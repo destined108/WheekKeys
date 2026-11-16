@@ -233,7 +233,7 @@ class Application:
         box.grid()
         values = {}
         for row, (name, title, low, high, increment) in enumerate((
-                ('threshold', 'Key presses per meal', 4, 100, 1),
+                ('threshold', 'Key presses per meal', 1, 1000, 1),
                 ('speed', 'Movement speed (×)', .5, 2, .1),
                 ('scale', 'Display size (×)', .5, 2, .1))):
             self.translated_widget(ttk.Label(box), title).grid(row=row, column=0, sticky='w', pady=6, padx=(0, 20))
@@ -250,7 +250,7 @@ class Application:
                                    speed=float(values['speed'].get()), scale=float(values['scale'].get()),
                                    topmost=topmost.get(), paused=paused.get()).validate()
             except ValueError as error:
-                detail = str(error) if str(error) in ('Keys per meal must be an integer between 4 and 100.', 'Speed must be between 0.5 and 2.0.', 'Scale must be between 0.5 and 2.0.') else 'Enter a whole number for keys per meal and numbers for speed and size.'
+                detail = str(error) if str(error) in ('Keys per meal must be an integer between 1 and 1000.', 'Speed must be between 0.5 and 2.0.', 'Scale must be between 0.5 and 2.0.') else 'Enter a whole number for keys per meal and numbers for speed and size.'
                 messagebox.showerror(self.t('Check your settings'), self.t(detail), parent=dialog)
                 return
             if self.persist(settings):

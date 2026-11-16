@@ -7,7 +7,7 @@
 ![打字时牧草慢慢长出来，小豚鼠跑来吃完，又回去趴下](docs/demo-typing-v3.gif)
 
 [![下载 Windows 试玩版](https://img.shields.io/badge/Windows-下载试玩版-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)
-[下载花色模板](skins/template.json) · [换上你家豚鼠的花色](skins/README.zh-CN.md)
+[制作自己的豚鼠](#制作自己的豚鼠) — 把[这个 skill](.agents/skills/create-guinea-pig/SKILL.md) 和自家豚鼠的照片发给 agent 即可。
 
 > 项目还在原型阶段，暂时没有正式发布版或安装程序。点击上方按钮，选择最新一次成功的 Windows 构建，在页面的 **Artifacts** 区域下载 **WheekKeys-Windows**，解压后运行 `WheekKeys.exe` 即可。下载需要登录 GitHub，程序目前尚未进行代码签名。请使用最新提交对应的版本，其中包含打字检测的修复。
 
@@ -30,7 +30,7 @@ Windows 版启动后，任务栏通知区域会出现豚鼠图标；如果没看
 
 在 **设置…（Settings…）** 中，可以调整：
 
-- 吃一次草需要按多少次键：4～100 次，默认 12 次。
+- 吃一次草需要按多少次键：1～1000 次，默认 12 次。
 - 移动速度：0.5～2 倍。
 - 显示大小：0.5～2 倍。
 - 是否始终显示在其他窗口上方。
@@ -93,12 +93,21 @@ python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys 
 
 自动测试覆盖按键计数、画面反馈、动画时序和花色替换；Windows 上的实际窗口显示和键盘监听仍需实机验证。
 
-## 让它长得像你家的豚鼠
+## 制作自己的豚鼠
 
-想让 agent 根据照片制作模型？把 [create-guinea-pig skill](.agents/skills/create-guinea-pig/SKILL.md) 和参考图发给它即可。这里有[可直接复制的提示词、资源位置和导入方法](models/README.zh-CN.md#让-agent-帮你制作)。完成后，你会拿到预览和可通过宠物或托盘菜单导入的 ZIP。
+把 [create-guinea-pig skill](.agents/skills/create-guinea-pig/SKILL.md) 和豚鼠照片或描述发给你的编程 agent，再复制下面这段话：
 
-复制[花色模板](skins/template.json)，修改其中的五个颜色，就能给土豆换一身花色。具体方法见[花色指南](skins/README.zh-CN.md)；想自己画外形和动作，可以看[模型制作指南](models/README.zh-CN.md)。欢迎在 Issue 里晒出你的作品，也可以附上预览图，提交 PR，把花色分享给其他人。
+> 请读取本仓库的 `.agents/skills/create-guinea-pig/SKILL.md`，按参考图制作我的豚鼠。名字是：____。如果换花色就能满足需求，只做花色；否则制作完整模型。请检查结果，给我预览和可导入的文件，并告诉我怎么安装。不要把我的参考照片放进交付文件。
 
-如果这只小豚鼠让你笑了一下，欢迎点个 Star，或把十秒演示分享给同样喜欢豚鼠的朋友。
+如果 agent 支持发现仓库 skill，可以直接调用 **`$create-guinea-pig`**。如果不支持，就把 [SKILL.md](.agents/skills/create-guinea-pig/SKILL.md) 的内容粘贴到聊天中。agent 需要能访问本仓库和 Python 依赖；绘制新角色还需要图像工具，或由你提供动作图。
+
+**换花色和制作完整模型都用同一个 skill。** agent 会选择合适的方式，准备资源，再告诉你如何导入：
+
+- **只换花色：** 你会拿到 `skin.json` 和预览。右键点击宠物或托盘图标，选择“导入花色…”，选中这个 JSON 文件。
+- **制作新模型：** 你会拿到模型 ZIP 和预览。解压后选择“导入模型…”，选中包含 `model.json` 的文件夹。
+
+向项目贡献时，花色资源放在 `skins/community/<模型名>/`，完整模型放在 `models/community/<模型名>/`，下载用的 ZIP 放在 `dist/`。程序会把导入的资源复制到用户目录，不需要往 exe 旁边放文件，也不需要重新打包。想手动画模型的用户仍可查阅[模型格式说明](models/README.zh-CN.md)。
+
+欢迎在 Issue 分享预览，或提交包含资源的 PR。如果这只小豚鼠让你笑了一下，也欢迎点个 Star，或把十秒演示分享给同样喜欢豚鼠的朋友。
 
 项目采用 MIT 许可证。角色图片参考用户提供的示例，使用 AI 辅助生成；项目提供的美术素材同样采用 MIT 许可证。

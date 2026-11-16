@@ -16,7 +16,7 @@ else:
 from PIL import Image
 from wheekkeys.models import builtin, export_model, load_model
 from wheekkeys.scene import Scene
-from wheekkeys.art import render
+from wheekkeys.art import render, load_skin
 
 
 def check(folder):
@@ -38,14 +38,27 @@ def check(folder):
 def preview(folder):
     folder = Path(folder)
     model = check(folder)
+    return render_preview(model, folder/'preview.gif', model.skin)
+
+
+def render_preview(model, target, skin):
+    target = Path(target)
     scene = Scene(demo=True)
     frames = []
     for _ in range(200):
         pet = scene.advance(.05)
-        frames.append(render(pet, model.skin, '#182B27', model).convert('RGB'))
-    target = folder/'preview.gif'
+        frames.append(render(pet, skin, '#182B27', model).convert('RGB'))
+    target.parent.mkdir(parents=True, exist_ok=True)
     frames[0].save(target, save_all=True, append_images=frames[1:], duration=50, loop=0, optimize=True)
     return target
+
+
+def preview_skin(path, output, model_folder=None):
+    if Path(output).suffix.lower() != '.gif':
+        raise ValueError('Palette preview output must end in .gif.')
+    skin = load_skin(path)
+    model = check(model_folder) if model_folder else builtin()
+    return render_preview(model, output, skin)
 
 
 def package(folder, output):
@@ -89,6 +102,10 @@ def main():
         child.add_argument('folder', type=Path)
         if command == 'package':
             child.add_argument('--output', type=Path, required=True)
+    palette_parser = subparsers.add_parser('preview-skin', help='Validate a palette and render its ten-second preview')
+    palette_parser.add_argument('palette', type=Path)
+    palette_parser.add_argument('--output', type=Path, required=True)
+    palette_parser.add_argument('--model', type=Path, help='Custom model folder; defaults to Potato')
     args = parser.parse_args()
     try:
         if args.command == 'init':
@@ -102,6 +119,8 @@ def main():
         elif args.command == 'check':
             model = check(args.folder)
             print(f'Valid model: {model.name}; 8 visible frames; transparent PNG sheets.')
+        elif args.command == 'preview-skin':
+            print(preview_skin(args.palette, args.output, args.model))
         elif args.command == 'preview':
             print(preview(args.folder))
         else:

@@ -66,3 +66,27 @@ class PreferenceTests(unittest.TestCase):
         pet.speed = 2
         pet.tick(0)
         self.assertEqual(pet.x, before)
+
+    def test_meal_threshold_boundaries_and_high_threshold_feeding(self):
+        for threshold in (1, 1000):
+            with self.subTest(threshold=threshold), TemporaryDirectory() as folder:
+                path = Path(folder)/'settings.json'
+                settings = Settings(threshold=threshold)
+                save_settings(settings, path)
+                self.assertEqual(load_settings(path).threshold, threshold)
+                pet = Pet(threshold=threshold)
+                pet.tick(0, threshold-1)
+                self.assertEqual(pet.state, 'rest')
+                pet.tick(0, 1)
+                self.assertEqual(pet.state, 'run')
+        for threshold in (0, 1001, 1.5, True):
+            with self.subTest(invalid=threshold), self.assertRaises(ValueError):
+                Settings(threshold=threshold).validate()
+
+    def test_grass_growth_scales_with_large_threshold(self):
+        skin = builtin().skin
+        normal = render(Pet(grass=12, threshold=12), skin)
+        high = render(Pet(grass=1000, threshold=1000), skin)
+        self.assertEqual(normal.tobytes(), high.tobytes())
+        halfway = render(Pet(grass=500, threshold=1000), skin)
+        self.assertNotEqual(high.tobytes(), halfway.tobytes())

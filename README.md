@@ -7,7 +7,7 @@ English · [简体中文](README.zh-CN.md)
 ![Typing grows hay; Potato scurries over, eats, and returns to sleep](docs/demo-typing-v3.gif)
 
 [![Windows · Download build](https://img.shields.io/badge/Windows-Download_build-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)
-[Skin template](skins/template.json) · [Make your own cavy](skins/README.md)
+[Make your own cavy](#make-your-own-cavy) — send [this skill](.agents/skills/create-guinea-pig/SKILL.md) and your pet’s photo to your agent.
 
 > Early prototype. No installer or Release is available yet. The button opens Windows CI builds: choose a successful run, download **Artifacts → WheekKeys-Windows**, unzip, and run `WheekKeys.exe`. GitHub sign-in is required for artifact downloads. The executable is unsigned. Download a build from the latest commit to get the updated typing detection.
 
@@ -28,7 +28,7 @@ The **Language** submenu in both the pet and tray menus offers **Follow system**
 
 The Windows app adds a guinea pig icon to the system tray (it may be under the tray's hidden-icons arrow). Right-click the icon or the pet to access models, colors, settings, manual feeding, and quitting. The tray also lets you hide and restore the pet.
 
-**Settings** offers keys per meal (4–100), movement speed (0.5–2×), display size (0.5–2×), always-on-top, and pausing keyboard interaction. Click **Save** to apply and remember changes. Pausing ignores typing while the current animation can finish; manual feeding remains available. Dragged window positions are remembered too.
+**Settings** offers keys per meal (1–1000), movement speed (0.5–2×), display size (0.5–2×), always-on-top, and pausing keyboard interaction. Click **Save** to apply and remember changes. Pausing ignores typing while the current animation can finish; manual feeding remains available. Dragged window positions are remembered too.
 
 **Pet model** selects an installed character. One model, Potato, is bundled. **Import model…** installs a full animation pack; **Import colors…** changes only its palette. **Export model template…** saves an editable copy of the current character. See [model pack format](models/README.md). Switching models restores that model's own colors.
 
@@ -79,10 +79,21 @@ Output: `dist/WheekKeys.exe`. CI tests and packages the app, uploads an artifact
 
 Windows acceptance check: launch without `--demo`, switch to Notepad, type twelve quick taps, and verify twelve feedback pulses, a full meter, and one feeding cycle. Hold a key to verify repeat filtering. Check dragging, quitting, demo mode, and custom skins. Automated tests cover counting, feedback, scene timing, animation, and palettes; native Windows desktop/hook behavior still requires Windows verification.
 
-## Bring your own guinea pig
+## Make your own cavy
 
-Want an agent to make a model from your pet's photo? Send it [the create-guinea-pig skill](.agents/skills/create-guinea-pig/SKILL.md) and your reference. See [the ready-to-copy prompt and resource locations](models/README.md#let-an-agent-make-your-cavy). It delivers a preview and ZIP you can import from the pet or tray menu.
+Send your coding agent [the create-guinea-pig skill](.agents/skills/create-guinea-pig/SKILL.md) and a photo or description of your pet. Copy this prompt:
 
-Copy [the template](skins/template.json), change five colors, and share a preview in an Issue or skin PR. See the [palette guide](skins/README.md), or the [model guide](models/README.md) to draw your own character and animations. If Potato makes you smile, give the project a Star or share the ten-second clip with a guinea pig friend.
+> Read `.agents/skills/create-guinea-pig/SKILL.md` in this repository and follow it to make my guinea pig from the attached reference. Name: ____. Change only the coat colors if that is enough; otherwise create a full model. Validate the result, give me a preview and the importable files, and tell me how to install them. Keep my reference photos out of the deliverable.
+
+If your agent discovers repository skills, you can invoke **`$create-guinea-pig`** directly. Otherwise paste the contents of [SKILL.md](.agents/skills/create-guinea-pig/SKILL.md) into the chat. The agent needs access to this checkout and its Python dependencies; new artwork also needs an image tool or your supplied sprites.
+
+The same skill handles **coat colors and complete models**. It chooses the right workflow, prepares the resources, and explains the correct import:
+
+- **Colors only:** the agent delivers `skin.json` plus a preview. Choose **Import colors…** in the pet or tray menu and select that JSON file.
+- **New character:** the agent delivers a model ZIP plus a preview. Unzip it, choose **Import model…**, and select the folder containing `model.json`.
+
+For contributors, palette resources go in `skins/community/<slug>/`; full model resources go in `models/community/<slug>/`. Download ZIPs go in `dist/`. The app copies imports into your user data folder; you do not need to edit files beside the exe or rebuild it. The [model format reference](models/README.md) is available for artists who want to work manually.
+
+Share your preview in an Issue or submit your resources in a PR. If Potato makes you smile, give the project a Star or share the ten-second clip with a guinea pig friend.
 
 MIT License. Character sprites were created with AI assistance using a supplied visual reference. Project-provided artwork is distributed under the repository's MIT license.

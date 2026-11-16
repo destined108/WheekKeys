@@ -53,3 +53,24 @@ class ModelSkillTests(unittest.TestCase):
             image.save(pack/'walk.png')
             with self.assertRaises(ValueError):
                 helper.check(pack)
+
+    def test_palette_preview_uses_user_colors_without_changing_source(self):
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            palette = dict(builtin().skin, fur='#6699BB', patch='#344466')
+            source = root/'skin.json'
+            source.write_text(json.dumps(palette))
+            before = source.read_bytes()
+            output = helper.preview_skin(source, root/'previews/skin.gif')
+            self.assertEqual(source.read_bytes(), before)
+            with Image.open(output) as image:
+                self.assertEqual(image.size, (640, 224))
+                self.assertGreater(image.n_frames, 1)
+            with self.assertRaises(ValueError):
+                helper.preview_skin(source, source)
+            self.assertEqual(source.read_bytes(), before)
+            palette['fur'] = 'invalid'
+            source.write_text(json.dumps(palette))
+            with self.assertRaises(ValueError):
+                helper.preview_skin(source, root/'invalid.gif')
+            self.assertFalse((root/'invalid.gif').exists())

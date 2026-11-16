@@ -100,7 +100,9 @@ def render(pet, skin, background=(0, 0, 0, 0), model=None):
     sprite = sprite.copy()
     sprite.putalpha(sprite.getchannel('A').point(lambda a: 255 if a >= 128 else 0))
     im.alpha_composite(sprite, (x, y))
-    for i in range(pet.grass):
+    # Scale visual growth to the meal threshold and bound drawing work.
+    visible_grass = min(24, math.ceil(pet.grass * 12 / pet.threshold))
+    for i in range(visible_grass):
         gx = 250 + (i * 7 % 30)
         height = 4 + (i * 3 % 14)
         sway = int(math.sin(pet.elapsed*10+i)*2) if eating else 0

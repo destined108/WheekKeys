@@ -25,8 +25,8 @@ class Settings:
     def validate(self):
         if self.language not in ('auto', 'zh-Hans', 'zh-Hant', 'en'):
             raise ValueError('Invalid language.')
-        if type(self.threshold) is not int or not 4 <= self.threshold <= 100:
-            raise ValueError('Keys per meal must be an integer between 4 and 100.')
+        if type(self.threshold) is not int or not 1 <= self.threshold <= 1000:
+            raise ValueError('Keys per meal must be an integer between 1 and 1000.')
         for name in ('speed', 'scale'):
             value = getattr(self, name)
             if type(value) not in (int, float) or not .5 <= value <= 2:

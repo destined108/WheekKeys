@@ -2,7 +2,7 @@
 
 English · [简体中文](README.zh-CN.md) · [Back to WheekKeys](../README.md)
 
-A model pack replaces the character's artwork and animation frames. If you only want to change colors, start with the [palette guide](../skins/README.md).
+A model pack replaces the character's artwork and animation frames. If you only want to change colors, ask your agent to use the palette workflow in [the same skill](../.agents/skills/create-guinea-pig/SKILL.md#create-or-update-coat-colors).
 
 Choose **Language** in either menu to use Simplified Chinese, Traditional Chinese, English, or follow your system language. The steps below use the English labels.
 
@@ -58,7 +58,7 @@ Keep these four files together in the model folder. The filenames can differ if 
 
 Use transparent PNGs for both sprite sheets, with one complete, visible character inside each column. Keep the body proportions, size, and ground line consistent across frames so the pet does not wobble or slide. Use the exported images as a layout reference.
 
-Each sheet must be at most **8192×4096 pixels**, with width divisible by four. The renderer fits the character into an **86×62 scene-pixel** canvas, using one scale for all frames within each sheet. The default palette preserves the original artwork; custom palettes recolor detected regions while preserving shading. See the [palette guide](../skins/README.md) for details.
+Each sheet must be at most **8192×4096 pixels**, with width divisible by four. The renderer fits the character into an **86×62 scene-pixel** canvas, using one scale for all frames within each sheet. The default palette preserves the original artwork; custom palettes recolor detected regions while preserving shading. The [skill’s palette workflow](../.agents/skills/create-guinea-pig/SKILL.md#create-or-update-coat-colors) covers color fields and import steps.
 
 All paths in `model.json` must point to files inside the model folder. Model packs contain artwork and JSON only; the app does not load Python scripts, plugins, or executables from them.
 

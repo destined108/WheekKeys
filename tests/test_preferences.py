@@ -127,7 +127,9 @@ class PreferenceTests(unittest.TestCase):
         from wheekkeys.art import ROOT
         import shutil
         with TemporaryDirectory() as directory:
-            bundle = Path(directory)
+            # Windows may expose a short (8.3) alias in TEMP. The loader resolves
+            # paths, so compare against the same canonical directory spelling.
+            bundle = Path(directory).resolve()
             shutil.copytree(ROOT/'assets', bundle/'assets')
             shutil.copytree(ROOT/'skins', bundle/'skins')
             shutil.copytree(ROOT/'models/community/mochi', bundle/'models/community/mochi')

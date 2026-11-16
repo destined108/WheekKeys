@@ -118,3 +118,41 @@ class InterfaceTests(unittest.TestCase):
                         self.assertEqual(load_settings(directory/'settings.json').language, 'auto')
                     finally:
                         app.quit()
+
+    def test_model_manager_cancel_delete_and_active_fallback(self):
+        with TemporaryDirectory() as folder:
+            directory = Path(folder)/'user'
+            with patch('wheekkeys.__main__.user_directory', return_value=directory), \
+                 patch('wheekkeys.settings.user_directory', return_value=directory), \
+                 patch('wheekkeys.__main__.create_tray', return_value=Mock()):
+                root = tk.Tk()
+                app = Application(root, SimpleNamespace(demo=True, skin=None))
+                try:
+                    exported = export_model(builtin(), Path(folder)/'source')
+                    with patch('wheekkeys.__main__.filedialog.askdirectory', return_value=str(Path(exported.poses).parent)):
+                        app.import_model()
+                    imported = app.model
+                    app.open_settings()
+                    root.update()
+                    self.assertFalse(app.delete_button.instate(['disabled']))
+                    with patch('wheekkeys.__main__.messagebox.askyesno', return_value=False):
+                        app.delete_button.invoke()
+                    self.assertTrue(Path(imported.poses).exists())
+                    self.assertEqual(app.settings.model, imported.id)
+                    with patch('wheekkeys.__main__.messagebox.askyesno', return_value=True), \
+                         patch.object(app, 'persist', return_value=False):
+                        app.delete_button.invoke()
+                    self.assertTrue(Path(imported.poses).exists())
+                    with patch('wheekkeys.__main__.messagebox.askyesno', return_value=True):
+                        app.delete_button.invoke()
+                    self.assertEqual(app.model.id, 'potato')
+                    self.assertEqual(load_settings(directory/'settings.json').model, 'potato')
+                    self.assertFalse(Path(imported.poses).parent.exists())
+                    self.assertTrue(Path(exported.poses).exists())
+                    self.assertEqual(list(app.model_list.get_children()), ['potato', 'mochi'])
+                    self.assertTrue(app.delete_button.instate(['disabled']))
+                    app.model_list.selection_set('mochi')
+                    app.update_delete_button()
+                    self.assertTrue(app.delete_button.instate(['disabled']))
+                finally:
+                    app.quit()

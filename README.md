@@ -36,6 +36,8 @@ The Windows app adds a guinea pig icon to the system tray (it may be under the t
 
 **Pet model** selects an installed character. Two models, **Potato** and **Mochi**, are bundled; switch between them directly from this menu, with no import required. **Import model…** installs a full animation pack; **Import colors…** changes only its palette. **Export model template…** saves an editable copy of the current character. See [model pack format](models/README.md). Switching models restores that model's own colors.
 
+**Settings → Manage pet models** lists built-in and imported pets. Select an imported model and choose **Delete selected model…** to remove its installed copy after confirmation. Original source files are kept. Deleting the active model switches to Potato; built-in Potato and Mochi cannot be deleted.
+
 Preferences, imported models, and palettes live under `%APPDATA%\WheekKeys`, outside the exe. If the tray cannot start, the pet's right-click menu remains available and hiding is disabled.
 
 ## Keyboard privacy

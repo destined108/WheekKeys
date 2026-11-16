@@ -7,6 +7,8 @@ from uuid import uuid4
 from PIL import Image
 from .art import ROOT, load_skin, sprites, COLOR_KEYS
 
+BUILTIN_IDS = frozenset(('potato', 'mochi'))
+
 
 @dataclass
 class Model:
@@ -85,3 +87,18 @@ def export_model(model, destination):
 def import_model(source, directory):
     model = load_model(source)
     return export_model(model, Path(directory)/('model-'+uuid4().hex[:12]))
+
+
+def delete_model(model, directory):
+    """Remove only an installed user pack, never source files or built-ins."""
+    if model.id in BUILTIN_IDS:
+        raise ValueError('Built-in models cannot be deleted.')
+    root = Path(directory).resolve()
+    folder = root / model.id
+    if folder.is_symlink() or folder.resolve().parent != root:
+        raise ValueError('Only installed models in your user folder can be deleted.')
+    for resource in (model.poses, model.walk):
+        if not Path(resource).resolve().is_relative_to(folder.resolve()):
+            raise ValueError('Only installed models in your user folder can be deleted.')
+    shutil.rmtree(folder)
+    sprites.cache_clear()

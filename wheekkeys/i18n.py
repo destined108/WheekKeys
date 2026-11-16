@@ -123,6 +123,26 @@ ZH.update({'Palette must be a JSON object.': '花色文件必须是 JSON 对象�
 ZH_HANT.update({'Palette must be a JSON object.': '花色檔案必須是 JSON 物件。',
                 'Model manifest must be a JSON object.': '模型設定必須是 JSON 物件。',
                 'Model file paths must be nonempty strings.': '模型檔案路徑必須是非空字串。'})
+ZH.update({
+    'Deleting a model takes effect immediately.': '确认删除后立即生效，无需点击保存。',
+    'Manage pet models': '管理宠物模型', 'Type': '类型', 'Built-in': '内置', 'Imported': '已导入',
+    'Delete selected model…': '删除所选模型…', 'Delete model': '删除模型',
+    'Cannot delete model': '无法删除模型',
+    'Built-in models cannot be deleted.': '内置模型不能删除。',
+    'Only installed models in your user folder can be deleted.': '只能删除用户目录中已安装的模型。',
+    'Built-in pets are kept. Deleting the active model switches to Potato.': '内置宠物会保留；删除当前模型时会切回土豆。',
+    'Delete "{name}"? This removes its installed copy. Original source files are kept.': '确定删除“{name}”吗？只删除已安装的副本，原始素材文件会保留。',
+})
+ZH_HANT.update({
+    'Deleting a model takes effect immediately.': '確認刪除後立即生效，無須按下儲存。',
+    'Manage pet models': '管理寵物模型', 'Type': '類型', 'Built-in': '內建', 'Imported': '已匯入',
+    'Delete selected model…': '刪除所選模型…', 'Delete model': '刪除模型',
+    'Cannot delete model': '無法刪除模型',
+    'Built-in models cannot be deleted.': '內建模型無法刪除。',
+    'Only installed models in your user folder can be deleted.': '只能刪除使用者資料夾中已安裝的模型。',
+    'Built-in pets are kept. Deleting the active model switches to Potato.': '內建寵物會保留；刪除目前模型時會切回土豆。',
+    'Delete "{name}"? This removes its installed copy. Original source files are kept.': '確定刪除「{name}」嗎？只刪除已安裝的副本，原始素材檔案會保留。',
+})
 ZH.update({'Mochi': '奶糖'})
 ZH_HANT.update({'Mochi': '奶糖'})
 ZH.update({'Language': '语言', 'Follow system': '跟随系统', 'Invalid language.': '语言设置无效。'})

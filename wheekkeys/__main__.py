@@ -12,7 +12,7 @@ from PIL import Image, ImageTk
 from .scene import Scene
 from .keyboard import KeyCounter
 from .art import load_skin, render
-from .models import available_models, export_model, import_model
+from .models import available_models, export_model, import_model, delete_model, BUILTIN_IDS
 from .settings import Settings, load_settings, save_settings, user_directory
 from .tray import create_tray, tray_image
 from .i18n import Translator, detect_language, LANGUAGES, LANGUAGE_NAMES
@@ -52,6 +52,8 @@ class Application:
         self.frame_job = None
         self.dialog = None
         self.dialog_text = []
+        self.model_list = None
+        self.delete_button = None
         self.transparent = '#ff00ff'
         root.title('WheekKeys')
         root.overrideredirect(True)
@@ -120,6 +122,7 @@ class Application:
         if self.persist(replace(self.settings, model=key, skin='')):
             self.model, self.skin = model, model.skin
             self.refresh_tray()
+            self.refresh_model_list()
 
     def popup(self, event):
         menu = tk.Menu(self.root, tearoff=False)
@@ -160,6 +163,7 @@ class Application:
                 self.dialog.title(self.t('WheekKeys settings'))
                 for widget, text in self.dialog_text:
                     widget.configure(text=self.t(text))
+            self.refresh_model_list()
             if self.tray:
                 self.tray.update_menu()
 
@@ -220,6 +224,49 @@ class Application:
         except (OSError, ValueError, KeyError, TypeError) as error:
             messagebox.showerror(self.t('Cannot import colors'), self.t(str(error)), parent=self.root)
 
+    def refresh_model_list(self):
+        if self.model_list is None or not self.model_list.winfo_exists():
+            return
+        selected = self.model_list.selection()
+        self.model_list.delete(*self.model_list.get_children())
+        self.model_list.heading('#0', text=self.t('Pet model'))
+        self.model_list.heading('kind', text=self.t('Type'))
+        for model in self.models:
+            kind = 'Built-in' if model.id in BUILTIN_IDS else 'Imported'
+            self.model_list.insert('', 'end', iid=model.id, text=self.t.model_name(model), values=(self.t(kind),))
+        key = selected[0] if selected and self.model_list.exists(selected[0]) else self.settings.model
+        if self.model_list.exists(key):
+            self.model_list.selection_set(key)
+        self.update_delete_button()
+
+    def update_delete_button(self, event=None):
+        selected = self.model_list.selection()
+        removable = bool(selected) and selected[0] not in BUILTIN_IDS
+        self.delete_button.configure(state='normal' if removable else 'disabled')
+
+    def delete_selected_model(self):
+        selected = self.model_list.selection()
+        if not selected or selected[0] in BUILTIN_IDS:
+            return
+        model = next(model for model in self.models if model.id == selected[0])
+        question = self.t('Delete "{name}"? This removes its installed copy. Original source files are kept.',
+                          name=self.t.model_name(model))
+        if not messagebox.askyesno(self.t('Delete model'), question, parent=self.dialog):
+            return
+        if self.settings.model == model.id:
+            self.select_model('potato')
+            if self.settings.model == model.id:  # Saving the fallback failed.
+                return
+        try:
+            delete_model(model, self.directory/'models')
+        except (OSError, ValueError) as error:
+            messagebox.showerror(self.t('Cannot delete model'), self.t(str(error)), parent=self.dialog)
+            return
+        self.models.remove(model)
+        self.refresh_model_list()
+        if self.tray:
+            self.tray.update_menu()
+
     def open_settings(self):
         if self.dialog and self.dialog.winfo_exists():
             self.dialog.lift()
@@ -243,7 +290,22 @@ class Application:
         paused = tk.BooleanVar(value=self.settings.paused)
         self.translated_widget(ttk.Checkbutton(box, variable=topmost), 'Keep pet above other windows').grid(row=3, columnspan=2, sticky='w', pady=6)
         self.translated_widget(ttk.Checkbutton(box, variable=paused), 'Pause typing interaction').grid(row=4, columnspan=2, sticky='w', pady=6)
-        self.translated_widget(ttk.Label(box), 'Changes take effect when you save.').grid(row=5, columnspan=2, pady=8)
+        manager = self.translated_widget(ttk.LabelFrame(box, padding=8), 'Manage pet models')
+        manager.grid(row=5, columnspan=2, sticky='ew', pady=8)
+        self.model_list = ttk.Treeview(manager, columns=('kind',), show='tree headings', height=4, selectmode='browse')
+        self.model_list.column('#0', width=190)
+        self.model_list.column('kind', width=90, stretch=False)
+        self.model_list.grid(row=0, column=0, sticky='ew')
+        scrollbar = ttk.Scrollbar(manager, orient='vertical', command=self.model_list.yview)
+        scrollbar.grid(row=0, column=1, sticky='ns')
+        self.model_list.configure(yscrollcommand=scrollbar.set)
+        self.delete_button = self.translated_widget(ttk.Button(manager, command=self.delete_selected_model), 'Delete selected model…')
+        self.delete_button.grid(row=1, columnspan=2, sticky='e', pady=(8, 0))
+        self.translated_widget(ttk.Label(manager), 'Deleting a model takes effect immediately.').grid(row=2, columnspan=2, sticky='w', pady=(6, 0))
+        self.model_list.bind('<<TreeviewSelect>>', self.update_delete_button)
+        self.refresh_model_list()
+        self.translated_widget(ttk.Label(box), 'Built-in pets are kept. Deleting the active model switches to Potato.').grid(row=6, columnspan=2, pady=4)
+        self.translated_widget(ttk.Label(box), 'Changes take effect when you save.').grid(row=7, columnspan=2, pady=8)
         def save():
             try:
                 settings = replace(self.settings, threshold=int(values['threshold'].get()),
@@ -260,7 +322,7 @@ class Application:
                     self.tray.update_menu()
                 dialog.destroy()
         buttons = ttk.Frame(box)
-        buttons.grid(row=6, columnspan=2, sticky='e', pady=(8, 0))
+        buttons.grid(row=8, columnspan=2, sticky='e', pady=(8, 0))
         self.translated_widget(ttk.Button(buttons, command=dialog.destroy), 'Cancel').pack(side='left', padx=4)
         self.translated_widget(ttk.Button(buttons, command=save), 'Save').pack(side='left')
 

@@ -139,3 +139,21 @@ class PreferenceTests(unittest.TestCase):
                 self.assertTrue(Path(models[1].poses).is_relative_to(bundle))
                 for model in models:
                     self.assertIsNotNone(render(Pet(), model.skin, model=model).getbbox())
+
+    def test_delete_imported_model_preserves_source_and_builtin_pets(self):
+        from wheekkeys.models import delete_model
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = export_model(builtin(), root/'source')
+            imported = import_model(root/'source', root/'user/models')
+            delete_model(imported, root/'user/models')
+            self.assertFalse(Path(imported.poses).parent.exists())
+            self.assertTrue(Path(source.poses).exists())
+            self.assertEqual([model.id for model in available_models(root/'user/models')[0]], ['potato', 'mochi'])
+            for model in builtin_models():
+                with self.assertRaises(ValueError):
+                    delete_model(model, root/'user/models')
+            # Never delete source artwork when handed the wrong installation root.
+            with self.assertRaises(ValueError):
+                delete_model(source, root/'user/models')
+            self.assertTrue(Path(source.poses).exists())

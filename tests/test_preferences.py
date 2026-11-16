@@ -13,7 +13,7 @@ class PreferenceTests(unittest.TestCase):
         with TemporaryDirectory() as folder:
             path = Path(folder)/'settings.json'
             self.assertEqual(load_settings(path), Settings())
-            settings = Settings(threshold=25, speed=1.5, scale=.75, paused=True, x=100, y=200)
+            settings = Settings(language='zh-Hant', threshold=25, speed=1.5, scale=.75, paused=True, x=100, y=200)
             save_settings(settings, path)
             self.assertEqual(load_settings(path), settings)
             self.assertFalse(path.with_suffix('.tmp').exists())
@@ -22,7 +22,7 @@ class PreferenceTests(unittest.TestCase):
         with TemporaryDirectory() as folder:
             path = Path(folder)/'settings.json'
             save_settings(Settings(), path)
-            for settings in (Settings(threshold=0), Settings(scale=float('nan')), Settings(speed=3)):
+            for settings in (Settings(threshold=0), Settings(scale=float('nan')), Settings(speed=3), Settings(language='fr')):
                 with self.assertRaises(ValueError):
                     save_settings(settings, path)
             self.assertEqual(load_settings(path), Settings())

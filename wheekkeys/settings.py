@@ -11,6 +11,7 @@ def user_directory():
 
 @dataclass
 class Settings:
+    language: str = 'auto'
     model: str = 'potato'
     skin: str = ''
     threshold: int = 12
@@ -22,6 +23,8 @@ class Settings:
     y: int | None = None
 
     def validate(self):
+        if self.language not in ('auto', 'zh-Hans', 'zh-Hant', 'en'):
+            raise ValueError('Invalid language.')
         if type(self.threshold) is not int or not 4 <= self.threshold <= 100:
             raise ValueError('Keys per meal must be an integer between 4 and 100.')
         for name in ('speed', 'scale'):

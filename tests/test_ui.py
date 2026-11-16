@@ -10,6 +10,7 @@ from tkinter import ttk
 from wheekkeys.__main__ import Application
 from wheekkeys.settings import load_settings
 from wheekkeys.models import builtin, export_model
+from wheekkeys.i18n import Translator
 
 
 def descendants(widget):
@@ -26,7 +27,9 @@ class InterfaceTests(unittest.TestCase):
             tray = Mock()
             with patch('wheekkeys.__main__.user_directory', return_value=directory), \
                  patch('wheekkeys.settings.user_directory', return_value=directory), \
-                 patch('wheekkeys.__main__.create_tray', return_value=tray):
+                 patch('wheekkeys.__main__.create_tray', return_value=tray), \
+                 patch('wheekkeys.__main__.Translator', return_value=Translator('en')), \
+                 patch('wheekkeys.__main__.detect_language', return_value='en'):
                 root = tk.Tk()
                 app = Application(root, SimpleNamespace(demo=True, skin=None))
                 # Provide the same queue bridge on Linux, where no tray is started.
@@ -62,3 +65,47 @@ class InterfaceTests(unittest.TestCase):
                 finally:
                     app.quit()
                 tray.stop.assert_called_once()
+
+    def test_menus_and_settings_follow_detected_language(self):
+        for language in ('zh-Hans', 'zh-Hant', 'en'):
+            with self.subTest(language=language), TemporaryDirectory() as folder:
+                directory = Path(folder)
+                translator = Translator(language)
+                with patch('wheekkeys.__main__.user_directory', return_value=directory), \
+                     patch('wheekkeys.settings.user_directory', return_value=directory), \
+                     patch('wheekkeys.__main__.create_tray', return_value=Mock()), \
+                     patch('wheekkeys.__main__.Translator', return_value=translator), \
+                     patch('wheekkeys.__main__.detect_language', return_value=language):
+                    root = tk.Tk()
+                    app = Application(root, SimpleNamespace(demo=True, skin=None))
+                    try:
+                        captured = []
+                        with patch.object(tk.Menu, 'tk_popup', autospec=True, side_effect=lambda menu, x, y: captured.append(menu)):
+                            app.popup(SimpleNamespace(x_root=10, y_root=10))
+                        menu = captured[0]
+                        labels = [menu.entrycget(i, 'label') for i in range(menu.index('end')+1) if menu.type(i) != 'separator']
+                        self.assertIn(translator('Settings…'), labels)
+                        self.assertIn(translator('Pet model'), labels)
+                        app.open_settings()
+                        root.update()
+                        self.assertEqual(app.dialog.title(), translator('WheekKeys settings'))
+                        buttons = [w.cget('text') for w in descendants(app.dialog) if isinstance(w, ttk.Button)]
+                        self.assertIn(translator('Save'), buttons)
+                        controls = [w for w in descendants(app.dialog) if isinstance(w, ttk.Spinbox)]
+                        controls[0].set('not a number')
+                        save = next(w for w in descendants(app.dialog) if isinstance(w, ttk.Button) and w.cget('text') == translator('Save'))
+                        with patch('wheekkeys.__main__.messagebox.showerror') as error:
+                            save.invoke()
+                        self.assertEqual(error.call_args.args[0], translator('Check your settings'))
+                        self.assertEqual(error.call_args.args[1], translator('Enter a whole number for keys per meal and numbers for speed and size.'))
+                        # Language changes preserve unsaved settings and update the open window.
+                        app.select_language('zh-Hant')
+                        self.assertEqual(app.dialog.title(), 'WheekKeys 設定')
+                        self.assertEqual(controls[0].get(), 'not a number')
+                        self.assertEqual(save.cget('text'), '儲存')
+                        self.assertEqual(load_settings(directory/'settings.json').language, 'zh-Hant')
+                        app.select_language('auto')
+                        self.assertEqual(app.t.language, language)
+                        self.assertEqual(load_settings(directory/'settings.json').language, 'auto')
+                    finally:
+                        app.quit()

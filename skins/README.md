@@ -1,16 +1,46 @@
-# 画出你家的豚鼠
+# Make your own guinea pig colors
 
-复制 `template.json` 为 `my-cavy.json`，保留字段，把颜色改成 `#RRGGBB`：
+English · [简体中文](README.zh-CN.md) · [Back to WheekKeys](../README.md)
 
-| 字段 | 部位 |
+A palette changes your pet's colors while keeping its shape and animations. To draw an entirely new character, follow the [model pack guide](../models/README.md).
+
+Choose **Language** in either menu to use Simplified Chinese, Traditional Chinese, English, or follow your system language. The steps below use the English labels.
+
+## 1. Copy the template
+
+Copy [template.json](template.json) to `my-cavy.json`. Keep all field names and replace the colors with hex values in `#RRGGBB` format:
+
+| Field | Purpose |
 | --- | --- |
-| name | 花色名称（不影响动画） |
-| fur | 身体底色 |
-| patch | 背部斑块和耳朵外侧 |
-| cream | 脸部和脚 |
-| ear | 耳朵内侧、鼻子和脚掌 |
-| eye | 眼睛与嘴 |
+| `name` | Palette name; does not affect animations |
+| `fur` | Main fur color |
+| `patch` | Dark fur patches and outer ears |
+| `cream` | Light fur on the face and feet |
+| `ear` | Pink areas such as inner ears, nose, and paws |
+| `eye` | Dark details such as eyes and mouth |
 
-在仓库根目录运行 `python -m wheekkeys --demo --skin skins/my-cavy.json` 预览。下载版可运行 `WheekKeys.exe --skin C:\path\my-cavy.json`；外部 JSON 不需要重新打包。
+Color regions are detected from the artwork, so these are approximate areas rather than individual paint layers. Shading is preserved when colors are replaced. The default palette leaves the original artwork unchanged.
 
-提交时添加一个 JSON 和预览图，并说明花色名称。请仅提交有权分享的素材，不放入私人信息。当前原型的素材包支持配色替换，身体轮廓来自 `assets/guinea-pig.png` 的四格精灵图（清醒、跑动、嚼草、趴睡），跑步使用 `assets/guinea-pig-walk.png` 的独立四帧步态，动画由共享渲染器提供。默认花色保留原画；修改颜色后按毛色区域映射，并保留明暗层次。
+## 2. Try it on your pet
+
+Right-click the pet or the Windows tray icon, choose **Import colors…**, and select your JSON file. The app copies it into your user data folder and remembers it for the next launch. Switching models restores the selected model's own colors; import your palette again to apply it to that model.
+
+You can also preview a palette from the repository root:
+
+```sh
+python -m wheekkeys --demo --skin skins/my-cavy.json
+```
+
+Or launch the downloaded Windows app with a palette for that session:
+
+```powershell
+.\WheekKeys.exe --skin "C:\path\my-cavy.json"
+```
+
+No repackaging is needed. `--demo` plays an automatic animation; omit it to try real typing on Windows. With source commands, use the Python interpreter from your configured virtual environment.
+
+## 3. Share your cavy
+
+Share a screenshot or GIF in an Issue, or submit a PR with your palette JSON, its name, and a preview. Only share artwork you have permission to distribute, and keep personal information out of the files.
+
+Want to change the body shape or draw your own walking and eating animations? Continue with [pet model packs](../models/README.md).

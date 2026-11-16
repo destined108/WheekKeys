@@ -1,29 +1,42 @@
 """Tray callbacks enqueue commands; only the Tk thread touches widgets."""
 from .art import COLOR_KEYS, sprites
+from .i18n import Translator, LANGUAGES, LANGUAGE_NAMES
 
 
-def create_tray(model, get_models, get_settings, send):
+def create_tray(model, get_models, get_settings, send, translator=None):
     import pystray
+    t = translator or Translator()
     def action(command, value=None):
         return lambda icon, item: send((command, value))
 
+    def item(label, *args, **kwargs):
+        return pystray.MenuItem(lambda menu_item: t(label), *args, **kwargs)
+
+    def language_menu():
+        return tuple(pystray.MenuItem(
+            (lambda item: t('Follow system')) if key == 'auto' else LANGUAGE_NAMES[key],
+            action('language', key), radio=True,
+            checked=lambda item, value=key: get_settings().language == value)
+            for key in LANGUAGES)
+
     def models_menu():
         return tuple(pystray.MenuItem(
-            model.name, action('model', model.id), radio=True,
+            lambda item, value=model: t.model_name(value), action('model', model.id), radio=True,
             checked=lambda item, key=model.id: get_settings().model == key)
             for model in get_models())
 
     menu = pystray.Menu(
-        pystray.MenuItem('Show / hide pet', action('visibility'), default=True),
-        pystray.MenuItem('Pet model', pystray.Menu(models_menu)),
-        pystray.MenuItem('Import model…', action('import_model')),
-        pystray.MenuItem('Export model template…', action('export_model')),
-        pystray.MenuItem('Import colors…', action('import_skin')),
-        pystray.MenuItem('Settings…', action('settings')),
-        pystray.MenuItem('Pause typing', action('pause'), checked=lambda item: get_settings().paused),
-        pystray.MenuItem('Feed a little hay', action('feed')),
+        item('Show / hide pet', action('visibility'), default=True),
+        item('Pet model', pystray.Menu(models_menu)),
+        item('Import model…', action('import_model')),
+        item('Export model template…', action('export_model')),
+        item('Import colors…', action('import_skin')),
+        item('Language', pystray.Menu(language_menu)),
+        item('Settings…', action('settings')),
+        item('Pause typing', action('pause'), checked=lambda item: get_settings().paused),
+        item('Feed a little hay', action('feed')),
         pystray.Menu.SEPARATOR,
-        pystray.MenuItem('Quit WheekKeys', action('quit')))
+        item('Quit WheekKeys', action('quit')))
     icon = pystray.Icon('WheekKeys', tray_image(model), 'WheekKeys', menu)
     icon.run_detached()
     return icon

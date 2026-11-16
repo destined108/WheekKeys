@@ -24,6 +24,8 @@ The GIF and `--demo` use the same fixed-step scene, twelve simulated taps, rende
 
 ## Tray, models, and settings
 
+The **Language** submenu in both the pet and tray menus offers **Follow system**, **简体中文**, **繁體中文**, and **English**. Changes apply immediately and are remembered. Follow system uses your Windows display language at startup: Simplified Chinese for mainland China and Singapore, Traditional Chinese for Taiwan, Hong Kong and Macau, and English for other languages. Explicit Hans/Hant script tags take precedence over region when available. Restart WheekKeys after changing the system display language.
+
 The Windows app adds a guinea pig icon to the system tray (it may be under the tray's hidden-icons arrow). Right-click the icon or the pet to access models, colors, settings, manual feeding, and quitting. The tray also lets you hide and restore the pet.
 
 **Settings** offers keys per meal (4–100), movement speed (0.5–2×), display size (0.5–2×), always-on-top, and pausing keyboard interaction. Click **Save** to apply and remember changes. Pausing ignores typing while the current animation can finish; manual feeding remains available. Dragged window positions are remembered too.
@@ -79,6 +81,8 @@ Windows acceptance check: launch without `--demo`, switch to Notepad, type twelv
 
 ## Bring your own guinea pig
 
-Copy [the template](skins/template.json), change five colors, and share a preview in an Issue or skin PR. See the [skin guide](skins/README.md). If Potato makes you smile, give the project a Star or share the ten-second clip with a guinea pig friend.
+Want an agent to make a model from your pet's photo? Send it [the create-guinea-pig skill](.agents/skills/create-guinea-pig/SKILL.md) and your reference. See [the ready-to-copy prompt and resource locations](models/README.md#let-an-agent-make-your-cavy). It delivers a preview and ZIP you can import from the pet or tray menu.
+
+Copy [the template](skins/template.json), change five colors, and share a preview in an Issue or skin PR. See the [palette guide](skins/README.md), or the [model guide](models/README.md) to draw your own character and animations. If Potato makes you smile, give the project a Star or share the ten-second clip with a guinea pig friend.
 
 MIT License. Character sprites were created with AI assistance using a supplied visual reference. Project-provided artwork is distributed under the repository's MIT license.

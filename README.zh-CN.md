@@ -7,7 +7,7 @@
 ![打字时牧草慢慢长出来，小豚鼠跑来吃完，又回去趴下](docs/demo-typing-v3.gif)
 
 [![下载 Windows 试玩版](https://img.shields.io/badge/Windows-下载试玩版-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/actions/workflows/windows.yml)
-[下载花色模板](skins/template.json) · [换上你家豚鼠的花色](skins/README.md)
+[下载花色模板](skins/template.json) · [换上你家豚鼠的花色](skins/README.zh-CN.md)
 
 > 项目还在原型阶段，暂时没有正式发布版或安装程序。点击上方按钮，选择最新一次成功的 Windows 构建，在页面的 **Artifacts** 区域下载 **WheekKeys-Windows**，解压后运行 `WheekKeys.exe` 即可。下载需要登录 GitHub，程序目前尚未进行代码签名。请使用最新提交对应的版本，其中包含打字检测的修复。
 
@@ -24,9 +24,11 @@ GIF 和程序内的演示使用相同的动画逻辑和播放节奏：模拟十�
 
 ## 托盘、模型与设置
 
+宠物右键和托盘菜单中的 **语言** 子菜单提供 **跟随系统、简体中文、繁體中文、English**，选择后立即生效，下次启动也会保留。跟随系统时，中国大陆和新加坡的中文环境使用简体，台湾、香港和澳门的中文环境使用繁体，其他语言使用英文；语言标记明确指定简体或繁体时，以标记为准。Windows 读取当前用户的显示语言，不受日期、数字等区域格式影响；更改系统显示语言后，请重新启动 WheekKeys。以下菜单名称同时列出中文和英文，方便对照。
+
 Windows 版启动后，任务栏通知区域会出现豚鼠图标；如果没看到，可以展开托盘里的隐藏图标。右键点击托盘图标或宠物，都可以切换模型、导入花色、打开设置、手动喂草或退出。托盘菜单还可以隐藏宠物，再把它叫回来。
 
-在 **Settings…（设置）** 中，可以调整：
+在 **设置…（Settings…）** 中，可以调整：
 
 - 吃一次草需要按多少次键：4～100 次，默认 12 次。
 - 移动速度：0.5～2 倍。
@@ -34,9 +36,9 @@ Windows 版启动后，任务栏通知区域会出现豚鼠图标；如果没看
 - 是否始终显示在其他窗口上方。
 - 是否暂停打字互动：暂停后不再随打字长草，已经开始的动作会继续，也可以手动喂草。
 
-点击 **Save（保存）** 后立即生效，下次启动也会保留。拖动后的窗口位置同样会记住。
+点击 **保存（Save）** 后立即生效，下次启动也会保留。拖动后的窗口位置同样会记住。
 
-**Pet model（宠物模型）** 用来选择已安装的角色，目前内置「土豆」一个模型。通过 **Import model…（导入模型）** 可以添加包含完整动作的新角色；**Import colors…（导入花色）** 只改变颜色。想制作自己的模型，可以先用 **Export model template…（导出模型模板）** 导出当前角色，再修改图片和名称。切换模型时会恢复该模型自带的花色，详细格式见[模型包说明](models/README.md)。
+**宠物模型（Pet model）** 用来选择已安装的角色，目前内置「土豆」一个模型。通过 **导入模型…（Import model…）** 可以添加包含完整动作的新角色；**导入花色…（Import colors…）** 只改变颜色。想制作自己的模型，可以先用 **导出模型模板…（Export model template…）** 导出当前角色，再修改图片和名称。切换模型时会恢复该模型自带的花色，详细格式见[模型包说明](models/README.zh-CN.md)。
 
 设置、导入的模型和花色都保存在 `%APPDATA%\WheekKeys` 中，不需要修改 exe。如果托盘启动失败，仍可以使用宠物右键菜单；此时会禁用隐藏功能，避免隐藏后无法找回。
 
@@ -93,7 +95,9 @@ python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys 
 
 ## 让它长得像你家的豚鼠
 
-复制[花色模板](skins/template.json)，修改其中的五个颜色，就能给土豆换一身花色。具体方法见[花色指南](skins/README.md)。欢迎在 Issue 里晒出你的作品，也可以附上预览图，提交 PR，把花色分享给其他人。
+想让 agent 根据照片制作模型？把 [create-guinea-pig skill](.agents/skills/create-guinea-pig/SKILL.md) 和参考图发给它即可。这里有[可直接复制的提示词、资源位置和导入方法](models/README.zh-CN.md#让-agent-帮你制作)。完成后，你会拿到预览和可通过宠物或托盘菜单导入的 ZIP。
+
+复制[花色模板](skins/template.json)，修改其中的五个颜色，就能给土豆换一身花色。具体方法见[花色指南](skins/README.zh-CN.md)；想自己画外形和动作，可以看[模型制作指南](models/README.zh-CN.md)。欢迎在 Issue 里晒出你的作品，也可以附上预览图，提交 PR，把花色分享给其他人。
 
 如果这只小豚鼠让你笑了一下，欢迎点个 Star，或把十秒演示分享给同样喜欢豚鼠的朋友。
 

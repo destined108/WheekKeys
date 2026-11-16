@@ -5,6 +5,7 @@ No Python installation needed. This preview executable is unsigned.
 
 Type normally in another app. Hay grows and your cavy comes to eat.
 Right-click the pet or its tray icon for settings, models, colors and quitting.
+Potato and Mochi are included. Choose Pet model to switch without importing.
 Drag the pet with the left mouse button. The tray icon may be under the
 hidden-icons arrow. Language can follow your system or be selected manually.
 
@@ -20,6 +21,7 @@ folder containing model.json. Do not place files next to this executable.
 
 在其他应用中正常打字即可长草，豚鼠会跑来吃。
 右键点击宠物或托盘图标，可以设置参数、换模型、导入花色或退出。
+内置土豆和奶糖，可在“宠物模型”中直接切换，无需导入。
 左键拖动宠物；托盘图标可能藏在通知区域的隐藏图标中。
 可在语言菜单中选择简体中文、繁體中文、English，或跟随系统。
 

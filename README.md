@@ -6,6 +6,10 @@ English · [简体中文](README.zh-CN.md)
 
 ![Typing grows hay; Potato scurries over, eats, and returns to sleep](docs/demo-chew-v4.gif)
 
+**Mochi — cream-and-caramel cavy, included alongside Potato.**
+
+![Mochi grows hay, walks over to eat, and returns to rest](models/community/mochi/preview.gif)
+
 [![Windows · Download build](https://img.shields.io/badge/Windows-Download-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/releases/latest/download/WheekKeys-Windows-x64.zip)
 [Make your own cavy](#make-your-own-cavy) — send [this skill](.agents/skills/create-guinea-pig/SKILL.md) and your pet’s photo to your agent.
 
@@ -30,7 +34,7 @@ The Windows app adds a guinea pig icon to the system tray (it may be under the t
 
 **Settings** offers keys per meal (1–1000), movement speed (0.5–2×), display size (0.5–2×), always-on-top, and pausing keyboard interaction. Click **Save** to apply and remember changes. Pausing ignores typing while the current animation can finish; manual feeding remains available. Dragged window positions are remembered too.
 
-**Pet model** selects an installed character. One model, Potato, is bundled. **Import model…** installs a full animation pack; **Import colors…** changes only its palette. **Export model template…** saves an editable copy of the current character. See [model pack format](models/README.md). Switching models restores that model's own colors.
+**Pet model** selects an installed character. Two models, **Potato** and **Mochi**, are bundled; switch between them directly from this menu, with no import required. **Import model…** installs a full animation pack; **Import colors…** changes only its palette. **Export model template…** saves an editable copy of the current character. See [model pack format](models/README.md). Switching models restores that model's own colors.
 
 Preferences, imported models, and palettes live under `%APPDATA%\WheekKeys`, outside the exe. If the tray cannot start, the pet's right-click menu remains available and hiding is disabled.
 
@@ -72,7 +76,7 @@ Package on Windows:
 
 ```powershell
 python -m pip install pyinstaller==6.16.0
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" --add-data "models/community/mochi;models/community/mochi" launcher.py
 ```
 
 Output: `dist/WheekKeys.exe`. CI tests and packages the app on Windows. Version tags (`v*`) publish the tested executable, portable ZIP and SHA-256 checksums as a Release; branch builds only upload CI artifacts.

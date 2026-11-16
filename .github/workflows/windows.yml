@@ -19,7 +19,7 @@ jobs:
       - run: python -m pip install -r requirements.txt pyinstaller==6.16.0
       - run: python -m unittest discover -s tests -v
       - name: Package portable Windows executable
-        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" --add-data "models/community/mochi;models/community/mochi" launcher.py
       - name: Create portable ZIP and checksums
         shell: pwsh
         run: |

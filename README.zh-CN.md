@@ -6,6 +6,10 @@
 
 ![打字时牧草慢慢长出来，小豚鼠跑来吃完，又回去趴下](docs/demo-chew-v4.gif)
 
+**奶糖 Mochi：奶油白和焦糖色的小伙伴，与土豆一起内置。**
+
+![奶糖长草、跑来吃草，再回去趴下](models/community/mochi/preview.gif)
+
 [![下载 Windows 试玩版](https://img.shields.io/badge/Windows-下载试玩版-78ad63?logo=windows&logoColor=white)](https://github.com/destined108/WheekKeys/releases/latest/download/WheekKeys-Windows-x64.zip)
 [制作自己的豚鼠](#制作自己的豚鼠) — 把[这个 skill](.agents/skills/create-guinea-pig/SKILL.md) 和自家豚鼠的照片发给 agent 即可。
 
@@ -38,7 +42,7 @@ Windows 版启动后，任务栏通知区域会出现豚鼠图标；如果没看
 
 点击 **保存（Save）** 后立即生效，下次启动也会保留。拖动后的窗口位置同样会记住。
 
-**宠物模型（Pet model）** 用来选择已安装的角色，目前内置「土豆」一个模型。通过 **导入模型…（Import model…）** 可以添加包含完整动作的新角色；**导入花色…（Import colors…）** 只改变颜色。想制作自己的模型，可以先用 **导出模型模板…（Export model template…）** 导出当前角色，再修改图片和名称。切换模型时会恢复该模型自带的花色，详细格式见[模型包说明](models/README.zh-CN.md)。
+**宠物模型（Pet model）** 用来选择已安装的角色，目前内置「土豆」和「奶糖」两只豚鼠，在这个菜单里直接切换即可，无需导入。通过 **导入模型…（Import model…）** 可以添加包含完整动作的新角色；**导入花色…（Import colors…）** 只改变颜色。想制作自己的模型，可以先用 **导出模型模板…（Export model template…）** 导出当前角色，再修改图片和名称。切换模型时会恢复该模型自带的花色，详细格式见[模型包说明](models/README.zh-CN.md)。
 
 设置、导入的模型和花色都保存在 `%APPDATA%\WheekKeys` 中，不需要修改 exe。如果托盘启动失败，仍可以使用宠物右键菜单；此时会禁用隐藏功能，避免隐藏后无法找回。
 
@@ -84,7 +88,7 @@ python -m docs.make_demo
 
 ```powershell
 python -m pip install pyinstaller==6.16.0
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" launcher.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name WheekKeys --icon assets/wheekkeys.ico --hidden-import pystray._win32 --add-data "skins;skins" --add-data "assets;assets" --add-data "models/community/mochi;models/community/mochi" launcher.py
 ```
 
 生成的程序位于 `dist/WheekKeys.exe`。GitHub Actions 会在 Windows 上运行测试并打包。推送版本标签（`v*`）后，会将通过测试的 exe、便携 ZIP 和 SHA-256 校验文件发布到 Release；普通分支构建只保存 CI 产物。

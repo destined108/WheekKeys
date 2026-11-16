@@ -36,6 +36,12 @@ class InterfaceTests(unittest.TestCase):
                 app.tray = tray
                 try:
                     root.update()
+                    self.assertEqual([model.id for model in app.models], ['potato', 'mochi'])
+                    app.select_model('mochi')
+                    app.frame()
+                    self.assertEqual(app.model.id, 'mochi')
+                    self.assertEqual(load_settings(directory/'settings.json').model, 'mochi')
+                    app.select_model('potato')
                     app.open_settings()
                     root.update()
                     controls = [w for w in descendants(app.dialog) if isinstance(w, ttk.Spinbox)]
@@ -86,6 +92,9 @@ class InterfaceTests(unittest.TestCase):
                         labels = [menu.entrycget(i, 'label') for i in range(menu.index('end')+1) if menu.type(i) != 'separator']
                         self.assertIn(translator('Settings…'), labels)
                         self.assertIn(translator('Pet model'), labels)
+                        models_menu = menu.nametowidget(menu.entrycget(0, 'menu'))
+                        model_labels = [models_menu.entrycget(i, 'label') for i in range(2)]
+                        self.assertIn(translator('Mochi'), model_labels)
                         app.open_settings()
                         root.update()
                         self.assertEqual(app.dialog.title(), translator('WheekKeys settings'))

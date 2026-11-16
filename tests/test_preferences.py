@@ -3,7 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 from wheekkeys.settings import Settings, load_settings, save_settings
-from wheekkeys.models import builtin, export_model, import_model, load_model, available_models
+from wheekkeys.models import builtin, export_model, import_model, load_model, available_models, builtin_models
 from wheekkeys.art import render
 from wheekkeys.core import Pet
 
@@ -36,8 +36,8 @@ class PreferenceTests(unittest.TestCase):
             shutil.rmtree(folder/'template')
             models, errors = available_models(folder/'models')
             self.assertEqual(errors, [])
-            self.assertEqual([m.id for m in models], ['potato', imported.id])
-            self.assertEqual(models[1].name, exported.name)
+            self.assertEqual([m.id for m in models], ['potato', 'mochi', imported.id])
+            self.assertEqual(models[2].name, exported.name)
             self.assertEqual(render(Pet(), builtin().skin).tobytes(), render(Pet(), imported.skin, model=imported).tobytes())
 
     def test_invalid_model_cannot_escape_its_directory(self):
@@ -101,5 +101,39 @@ class PreferenceTests(unittest.TestCase):
                 folder.mkdir()
                 (folder/'model.json').write_text(json.dumps(data), encoding='utf-8')
             models, errors = available_models(root)
-            self.assertEqual([model.id for model in models], ['potato', 'valid'])
+            self.assertEqual([model.id for model in models], ['potato', 'mochi', 'valid'])
             self.assertEqual(len(errors), 5)
+
+    def test_builtin_mochi_is_available_without_any_user_models(self):
+        from wheekkeys.i18n import Translator
+        with TemporaryDirectory() as directory:
+            models, errors = available_models(Path(directory)/'not-created')
+            self.assertEqual([model.id for model in models], ['potato', 'mochi'])
+            self.assertEqual(errors, [])
+            mochi = models[1]
+            self.assertEqual(Translator('en').model_name(mochi), 'Mochi')
+            self.assertEqual(Translator('zh-Hans').model_name(mochi), '奶糖')
+            self.assertEqual(Translator('zh-Hant').model_name(mochi), '奶糖')
+            for state in ('rest', 'run', 'eat', 'return'):
+                self.assertIsNotNone(render(Pet(state=state), mochi.skin, model=mochi).getbbox())
+            self.assertNotEqual(render(Pet(), models[0].skin, model=models[0]).tobytes(),
+                                render(Pet(), mochi.skin, model=mochi).tobytes())
+            path = Path(directory)/'settings.json'
+            save_settings(Settings(model='mochi'), path)
+            self.assertEqual(load_settings(path).model, mochi.id)
+
+    def test_builtin_models_load_from_packaged_resource_layout(self):
+        from unittest.mock import patch
+        from wheekkeys.art import ROOT
+        import shutil
+        with TemporaryDirectory() as directory:
+            bundle = Path(directory)
+            shutil.copytree(ROOT/'assets', bundle/'assets')
+            shutil.copytree(ROOT/'skins', bundle/'skins')
+            shutil.copytree(ROOT/'models/community/mochi', bundle/'models/community/mochi')
+            with patch('wheekkeys.models.ROOT', bundle), patch('wheekkeys.art.ROOT', bundle):
+                models = builtin_models()
+                self.assertEqual([model.id for model in models], ['potato', 'mochi'])
+                self.assertTrue(Path(models[1].poses).is_relative_to(bundle))
+                for model in models:
+                    self.assertIsNotNone(render(Pet(), model.skin, model=model).getbbox())

@@ -35,7 +35,7 @@ python .agents/skills/create-guinea-pig/scripts/model_pack.py package models/com
 
 右键点击宠物或 Windows 托盘图标，选择 **导出模型模板…（Export model template…）**，再选择保存位置。程序会新建一个文件夹，放入当前模型的图片和配置，不会覆盖已有文件夹。
 
-目前内置的模型是「土豆」。你可以以它为模板，修改图片，再到 `model.json` 中填写自己的角色名称：
+目前内置「土豆」和「奶糖」两个模型。先在“宠物模型”中选择一只，再导出为模板，修改图片，再到 `model.json` 中填写自己的角色名称：
 
 ```json
 {

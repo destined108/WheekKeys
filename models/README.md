@@ -35,7 +35,7 @@ python .agents/skills/create-guinea-pig/scripts/model_pack.py package models/com
 
 Right-click the pet or the Windows tray icon and choose **Export model template…**. Select a destination; the app creates a new folder containing the current model's artwork and configuration without overwriting existing folders.
 
-The prototype includes one built-in model, **Potato**. Export it as a starting point, then edit the images and the name in `model.json`:
+The app includes **Potato** and **Mochi** as built-in models. Select either from **Pet model**, then export it as a starting point, then edit the images and the name in `model.json`:
 
 ```json
 {

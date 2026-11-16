@@ -123,6 +123,8 @@ ZH.update({'Palette must be a JSON object.': '花色文件必须是 JSON 对象�
 ZH_HANT.update({'Palette must be a JSON object.': '花色檔案必須是 JSON 物件。',
                 'Model manifest must be a JSON object.': '模型設定必須是 JSON 物件。',
                 'Model file paths must be nonempty strings.': '模型檔案路徑必須是非空字串。'})
+ZH.update({'Mochi': '奶糖'})
+ZH_HANT.update({'Mochi': '奶糖'})
 ZH.update({'Language': '语言', 'Follow system': '跟随系统', 'Invalid language.': '语言设置无效。'})
 ZH_HANT.update({'Language': '語言', 'Follow system': '跟隨系統', 'Invalid language.': '語言設定無效。'})
 LANGUAGES = ('auto', 'zh-Hans', 'zh-Hant', 'en')
@@ -177,4 +179,5 @@ class Translator:
         return message.format(**values) if values else message
 
     def model_name(self, model):
-        return self('Potato') if model.id == 'potato' else model.name
+        names = {'potato': 'Potato', 'mochi': 'Mochi'}
+        return self(names[model.id]) if model.id in names else model.name

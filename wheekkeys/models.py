@@ -50,8 +50,13 @@ def load_model(folder):
     return model
 
 
+def builtin_models():
+    """The same resource paths work in a checkout and PyInstaller's bundle."""
+    return [builtin(), load_model(ROOT/'models/community/mochi')]
+
+
 def available_models(directory):
-    models, errors = [builtin()], []
+    models, errors = builtin_models(), []
     directory = Path(directory)
     if directory.exists():
         for folder in sorted(directory.iterdir()):
